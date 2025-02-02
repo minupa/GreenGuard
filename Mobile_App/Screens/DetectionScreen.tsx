@@ -17,9 +17,10 @@ const DetectionScreen = ({ route }: any) => {
     tea: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict",
     rice: "https://us-central1-red-abstraction-446513-u9.cloudfunctions.net/predict",
     coconut: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
+    cinnamon: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
   };
 
-  const PREDICTION_URL = crop === "tea" ? URLS.tea : crop === "coconut" ? URLS.coconut : URLS.rice;
+  const PREDICTION_URL = crop === "tea" ? URLS.tea : crop === "coconut" ? URLS.coconut :crop === "cinnamon" ? URLS.cinnamon : URLS.rice;
 
   useEffect(() => {
     requestPermissions();
