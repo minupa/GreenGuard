@@ -37,6 +37,9 @@ const CropSelectionScreen = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleCropSelect("cinnamon")}>
         <Text style={styles.buttonText}>Cinnamon</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => handleCropSelect("pepper")}>
+        <Text style={styles.buttonText}>Black Pepper</Text>
+      </TouchableOpacity>
     </View>
   );
 };
