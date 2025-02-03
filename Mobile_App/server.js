@@ -1,17 +1,13 @@
-// filepath: /c:/GreenGuard/GG_MobileApp/Mobile_App/server.js
 const express = require('express');
 const mysql = require('mysql');
-const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(cors());
+const port = 3001;
 
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'plant_disease_solutions'
+    database: 'plant_disease_solutions'  // Updated database name
 });
 
 db.connect(err => {
@@ -21,7 +17,7 @@ db.connect(err => {
 
 app.get('/solution/:disease', (req, res) => {
     const disease = req.params.disease;
-    const query = 'SELECT solution FROM solutions WHERE disease_name = ?';
+    const query = 'SELECT solution FROM solutions WHERE disease_name = ?';  // Updated table and column names
     db.query(query, [disease], (err, result) => {
         if (err) throw err;
         if (result.length > 0) {
