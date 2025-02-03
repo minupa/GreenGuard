@@ -23,6 +23,7 @@ const DetectionScreen = ({ route }: any) => {
   const [prediction, setPrediction] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [solution, setSolution] = useState<string | null>(null);
 
   // URLs based on crop selection
   const URLS = {
@@ -127,7 +128,23 @@ const DetectionScreen = ({ route }: any) => {
     setSelectedFile(null);
     setPrediction(null);
     setConfidence(null);
+    setSolution(null);
   };
+
+  const fetchSolution = async () => {
+    if (!prediction) return;
+
+    try {
+        const response = await axios.get(`https://b2c4-139-59-238-75.ngrok-free.app/solution/${prediction}`);
+        setSolution(response.data.solution);
+    } catch (error) {
+        console.error("Error fetching solution:", error);
+        Alert.alert(
+            "Solution Error",
+            "Failed to get solution. Please try again."
+        );
+    }
+};
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -208,6 +225,19 @@ const DetectionScreen = ({ route }: any) => {
             <Text style={styles.resultText}>
               Confidence: {confidence?.toFixed(2)}%
             </Text>
+            <TouchableOpacity
+              style={styles.solutionButton}
+              onPress={fetchSolution}
+            >
+              <Text style={styles.solutionButtonText}>Get Solution</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Solution */}
+        {solution && (
+          <View style={styles.solutionBox}>
+            <Text style={styles.solutionText}>{solution}</Text>
           </View>
         )}
 
@@ -314,6 +344,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#38761D",
+  },
+  solutionButton: {
+    marginTop: 10,
+    backgroundColor: "#BFFCBF",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  solutionButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  solutionBox: {
+    marginTop: 20,
+    backgroundColor: "#E3E3E3",
+    padding: 15,
+    borderRadius: 10,
+    width: "90%",
+  },
+  solutionText: {
+    fontSize: 16,
+    color: "#000000",
   },
   clearButton: {
     marginTop: 20,
