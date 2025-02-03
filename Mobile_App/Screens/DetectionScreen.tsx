@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button, Image, Alert, ActivityIndicator, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
-import { Video } from "react-native-video"; // Import Video component for video preview
+import { Video } from "react-native-video"; // For video preview
+import { useNavigation } from "@react-navigation/native"; // Import navigation hook
 
 const DetectionScreen = ({ route }: any) => {
-  const { crop } = route.params;
+  const { crop } = route.params; // Get crop parameter from route params
+  const navigation = useNavigation(); // Access the navigation object
+
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [prediction, setPrediction] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
@@ -16,12 +28,24 @@ const DetectionScreen = ({ route }: any) => {
   const URLS = {
     tea: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict",
     rice: "https://us-central1-red-abstraction-446513-u9.cloudfunctions.net/predict",
-    coconut: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
-    cinnamon: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
-    pepper: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict2",
+    coconut:
+      "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
+    cinnamon:
+      "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
+    pepper:
+      "https://us-central1-tea-disease-classification.cloudfunctions.net/predict2",
   };
 
-  const PREDICTION_URL = crop === "tea" ? URLS.tea : crop === "coconut" ? URLS.coconut :crop === "cinnamon" ? URLS.cinnamon :crop === "pepper" ? URLS.pepper : URLS.rice;
+  const PREDICTION_URL =
+    crop === "tea"
+      ? URLS.tea
+      : crop === "coconut"
+      ? URLS.coconut
+      : crop === "cinnamon"
+      ? URLS.cinnamon
+      : crop === "pepper"
+      ? URLS.pepper
+      : URLS.rice;
 
   useEffect(() => {
     requestPermissions();
@@ -29,11 +53,18 @@ const DetectionScreen = ({ route }: any) => {
 
   const requestPermissions = async () => {
     const cameraPermission = await request(PERMISSIONS.ANDROID.CAMERA);
-    const storagePermission = await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
-    const writePermission = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+    const storagePermission = await request(
+      PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
+    );
 
-    if (cameraPermission !== RESULTS.GRANTED || storagePermission !== RESULTS.GRANTED || writePermission !== RESULTS.GRANTED) {
-      Alert.alert("Permissions Required", "Camera and storage permissions are required for the app to function properly.");
+    if (
+      cameraPermission !== RESULTS.GRANTED ||
+      storagePermission !== RESULTS.GRANTED
+    ) {
+      Alert.alert(
+        "Permissions Required",
+        "Camera and storage permissions are required for the app to function properly."
+      );
     }
   };
 
@@ -63,31 +94,32 @@ const DetectionScreen = ({ route }: any) => {
       setConfidence(data.confidence);
     } catch (error) {
       console.error("Error predicting disease:", error);
-      Alert.alert("Prediction Error", "Failed to get predictions. Please try again.");
+      Alert.alert(
+        "Prediction Error",
+        "Failed to get predictions. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCapture = async (mediaType: "photo" | "video") => {
-    const options = {
-      mediaType,
-    };
-    const result = await launchCamera(options);
-    if (result.assets && result.assets.length > 0) {
-      setSelectedFile(result.assets[0]);
-      setPrediction(null);
-    }
-  };
-
-  const handleSelect = async (mediaType: "photo" | "video") => {
-    const options = {
-      mediaType,
-    };
+  const handleFileSelect = async (mediaType: "photo" | "video") => {
+    const options = { mediaType };
     const result = await launchImageLibrary(options);
     if (result.assets && result.assets.length > 0) {
       setSelectedFile(result.assets[0]);
       setPrediction(null);
+      setConfidence(null);
+    }
+  };
+
+  const handleFileCapture = async (mediaType: "photo" | "video") => {
+    const options = { mediaType };
+    const result = await launchCamera(options);
+    if (result.assets && result.assets.length > 0) {
+      setSelectedFile(result.assets[0]);
+      setPrediction(null);
+      setConfidence(null);
     }
   };
 
@@ -100,52 +132,91 @@ const DetectionScreen = ({ route }: any) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <Text style={styles.title}>{crop.toUpperCase()} Disease Detection</Text>
+        {/* Top Section: Back Button and Title */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backArrow}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>{crop.toUpperCase()} Disease Detection</Text>
+        </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => handleCapture("photo")}>
-            <Text style={styles.buttonText}>Capture Image</Text>
+        {/* Buttons for Capture and Upload */}
+        <View style={styles.selectionBox}>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => handleFileCapture("photo")}
+          >
+            <Text style={styles.radioTextSelected}>Capture Image</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleSelect("photo")}>
-            <Text style={styles.buttonText}>Upload Image</Text>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => handleFileSelect("photo")}
+          >
+            <Text style={styles.radioTextSelected}>Upload Image</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleCapture("video")}>
-            <Text style={styles.buttonText}>Capture Video</Text>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => handleFileCapture("video")}
+          >
+            <Text style={styles.radioTextSelected}>Capture Video</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleSelect("video")}>
-            <Text style={styles.buttonText}>Upload Video</Text>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => handleFileSelect("video")}
+          >
+            <Text style={styles.radioTextSelected}>Upload Video</Text>
           </TouchableOpacity>
         </View>
 
+        {/* File Preview */}
         {selectedFile && (
           <View style={styles.preview}>
             {selectedFile.type.startsWith("image/") ? (
-              <Image source={{ uri: selectedFile.uri }} style={styles.image} />
+              <Image
+                source={{ uri: selectedFile.uri }}
+                style={styles.imagePreview}
+              />
             ) : (
               <Video
                 source={{ uri: selectedFile.uri }}
-                style={styles.video}
+                style={styles.videoPreview}
+                controls
                 resizeMode="contain"
-                controls={true}
               />
             )}
-            <TouchableOpacity style={styles.predictButton} onPress={() => handleUpload(selectedFile)}>
-              <Text style={styles.buttonText}>Predict Disease</Text>
+
+            {/* Prediction Button */}
+            <TouchableOpacity
+              style={styles.selectButton}
+              onPress={() => handleUpload(selectedFile)}
+            >
+              <Text style={styles.selectButtonText}>Predict Disease</Text>
             </TouchableOpacity>
           </View>
         )}
 
+        {/* Loading Indicator */}
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
+        {/* Prediction Results */}
         {prediction && (
-          <View style={styles.resultContainer}>
+          <View style={styles.resultBox}>
             <Text style={styles.resultText}>Prediction: {prediction}</Text>
-            <Text style={styles.resultText}>Confidence: {confidence}%</Text>
+            <Text style={styles.resultText}>
+              Confidence: {confidence?.toFixed(2)}%
+            </Text>
           </View>
         )}
 
+        {/* Clear Selection */}
         {selectedFile && (
-          <TouchableOpacity style={styles.clearButton} onPress={clearSelection}>
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={clearSelection}
+          >
             <Text style={styles.clearButtonText}>Clear</Text>
           </TouchableOpacity>
         )}
@@ -155,37 +226,108 @@ const DetectionScreen = ({ route }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#f5f5f5" },
-  scrollContainer: { flexGrow: 1 },
-  title: { fontSize: 20, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
-  buttonContainer: { flexDirection: "column", alignItems: "center", justifyContent: "center" }, // Changed to column
-  button: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 12,
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    paddingTop: 20,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  topBar: {
+    flexDirection: "row", // Align back button and title side-by-side
+    alignItems: "center", // Vertically center align
+    marginBottom: 20, // Space below the top bar
+    width: "90%", // Ensure it aligns with other content
+    marginTop: 40, // Adjust vertical margin according to your layout
+  },
+  backButton: {
+    marginRight: 15, // Add spacing between back button and title
+    padding: 5, // Slight padding for touchability
+  },
+  backArrow: {
+    fontSize: 20, // Adjust arrow text size
+    color: "#000000",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  selectionBox: {
+    backgroundColor: "#E3E3E3",
+    width: "90%",
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+  },
+  radioOption: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#D3D3D3",
+  },
+  radioTextSelected: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000000",
+  },
+  preview: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  imagePreview: {
+    width: 200,
+    height: 200,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  videoPreview: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  selectButton: {
+    backgroundColor: "#BFFCBF",
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    width: "90%",
+    alignItems: "center",
+  },
+  selectButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  resultBox: {
+    marginTop: 20,
+    backgroundColor: "#DFF2EC",
+    padding: 15,
+    borderRadius: 10,
+    width: "90%",
+  },
+  resultText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#38761D",
+  },
+  clearButton: {
+    marginTop: 20,
+    marginBottom: 10,
+    backgroundColor: "#F8D7DA",
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginVertical: 8, // Added margin for spacing between buttons
-    width: 200, // Adjusted width
-    alignItems: "center",
-    justifyContent: "center",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
-  predictButton: {
-    backgroundColor: "#007bff",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
+  clearButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#721C24",
   },
-  preview: { alignItems: "center", marginTop: 20 },
-  image: { width: 200, height: 200, borderRadius: 10, marginBottom: 10 },
-  video: { width: 200, height: 200, borderRadius: 10, marginBottom: 10 },
-  resultContainer: { marginTop: 20, padding: 10, backgroundColor: "#d4edda", borderRadius: 10 },
-  resultText: { fontSize: 16, fontWeight: "bold", color: "#155724" },
-  clearButton: { marginTop: 20, backgroundColor: "#f8d7da", padding: 10, borderRadius: 5, alignItems: "center" },
-  clearButtonText: { fontSize: 16, color: "#721c24", fontWeight: "bold" },
 });
 
 export default DetectionScreen;

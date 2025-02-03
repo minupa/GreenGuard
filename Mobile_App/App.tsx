@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState } from "react";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CropSelectionScreen from "./Screens/CropSelectionScreen";
@@ -11,8 +11,19 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="CropSelection" component={CropSelectionScreen} options={{ title: "Select Crop" }} />
-        <Stack.Screen name="Detection" component={DetectionScreen} options={{ title: "Disease Detection" }} />
+        {/* Remove the header for the CropSelection screen */}
+        <Stack.Screen
+          name="CropSelection"
+          component={CropSelectionScreen}
+          options={{ headerShown: false }} // This disables the header
+        />
+
+        {/* Keep the header for the Detection screen */}
+        <Stack.Screen
+          name="Detection"
+          component={DetectionScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
