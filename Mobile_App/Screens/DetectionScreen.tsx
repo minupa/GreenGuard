@@ -132,21 +132,6 @@ const DetectionScreen = ({ route }: any) => {
     setSolution(null);
   };
 
-  const fetchSolution = async () => {
-    if (!prediction) return;
-  
-    try {
-      const response = await axios.get(`${API_URL}/solution/${prediction}`);
-      // const response = await axios.get(`${config.API_URL}/solution/${prediction}`); // If using a config file
-      setSolution(response.data.solution);
-    } catch (error) {
-      console.error("Error fetching solution:", error);
-      Alert.alert(
-        "Solution Error",
-        "Failed to get solution. Please try again."
-      );
-    }
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
