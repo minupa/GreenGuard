@@ -1,4 +1,3 @@
-// filepath: /c:/GreenGuard/GG_MobileApp/Mobile_App/server.js
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
@@ -8,10 +7,10 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'plant_disease_solutions'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.connect(err => {

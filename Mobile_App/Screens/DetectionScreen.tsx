@@ -1,3 +1,4 @@
+import { API_URL } from '@env';
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -135,7 +136,8 @@ const DetectionScreen = ({ route }: any) => {
     if (!prediction) return;
   
     try {
-      const response = await axios.get(`http://localhost:3000/solution/${prediction}`);
+      const response = await axios.get(`${API_URL}/solution/${prediction}`);
+      // const response = await axios.get(`${config.API_URL}/solution/${prediction}`); // If using a config file
       setSolution(response.data.solution);
     } catch (error) {
       console.error("Error fetching solution:", error);
