@@ -1,13 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'plant_disease_solutions'  // Updated database name
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'plant_disease_solutions'
 });
 
 db.connect(err => {
@@ -17,7 +18,7 @@ db.connect(err => {
 
 app.get('/solution/:disease', (req, res) => {
     const disease = req.params.disease;
-    const query = 'SELECT solution FROM solutions WHERE disease_name = ?';  // Updated table and column names
+    const query = 'SELECT solution FROM solutions WHERE disease_name = ?';
     db.query(query, [disease], (err, result) => {
         if (err) throw err;
         if (result.length > 0) {
