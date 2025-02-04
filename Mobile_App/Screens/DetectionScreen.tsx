@@ -1,4 +1,3 @@
-import { API_URL } from '@env';
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -24,7 +23,7 @@ const DetectionScreen = ({ route }: any) => {
   const [prediction, setPrediction] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [solution, setSolution] = useState<string | null>(null);
+  const [solution, setSolution] = useState<string | null>(null); // State for solution
 
   // URLs based on crop selection
   const URLS = {
@@ -54,7 +53,9 @@ const DetectionScreen = ({ route }: any) => {
   }, []);
 
   const requestPermissions = async () => {
-    const cameraPermission = await request(PERMISSIONS.ANDROID.CAMERA);
+    const cameraPermission = await request(
+      PERMISSIONS.ANDROID.CAMERA
+    );
     const storagePermission = await request(
       PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
     );
@@ -129,9 +130,18 @@ const DetectionScreen = ({ route }: any) => {
     setSelectedFile(null);
     setPrediction(null);
     setConfidence(null);
-    setSolution(null);
+    setSolution(null); // Clear solution when clearing selection
   };
 
+  const fetchSolution = async () => {
+    try {
+      const response = await axios.get(`http://10.0.236.10:3000/solution/${prediction}`);
+      setSolution(response.data);
+    } catch (error) {
+      console.error("Error fetching solution:", error);
+      Alert.alert("Solution Error", "Failed to get solution. Please try again.");
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -333,28 +343,23 @@ const styles = StyleSheet.create({
     color: "#38761D",
   },
   solutionButton: {
+    padding: 10,
+    backgroundColor: "#28a745",
+    borderRadius: 5,
     marginTop: 10,
-    backgroundColor: "#BFFCBF",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    alignItems: "center",
   },
   solutionButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000000",
+    color: "#fff",
   },
   solutionBox: {
-    marginTop: 20,
-    backgroundColor: "#E3E3E3",
-    padding: 15,
-    borderRadius: 10,
-    width: "90%",
+    padding: 10,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 5,
+    marginBottom: 16,
   },
   solutionText: {
     fontSize: 16,
-    color: "#000000",
+    color: "#000",
   },
   clearButton: {
     marginTop: 20,
