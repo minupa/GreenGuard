@@ -21,7 +21,7 @@ db.connect(err => {
 
 app.get('/solution/:disease', (req, res) => {
     const disease = req.params.disease;
-    const query = 'SELECT solutions FROM solutions WHERE disease_name = ?';
+    const query = 'SELECT solution FROM solutions WHERE disease_name = ?';
     db.query(query, [disease], (err, result) => {
         if (err) throw err;
         if (result.length > 0) {

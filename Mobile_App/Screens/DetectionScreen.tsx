@@ -133,18 +133,18 @@ const DetectionScreen = ({ route }: any) => {
 
   const fetchSolution = async () => {
     if (!prediction) return;
-
+  
     try {
-        const response = await axios.get(`https://b2c4-139-59-238-75.ngrok-free.app/solution/${prediction}`);
-        setSolution(response.data.solution);
+      const response = await axios.get(`http://localhost:3000/solution/${prediction}`);
+      setSolution(response.data.solution);
     } catch (error) {
-        console.error("Error fetching solution:", error);
-        Alert.alert(
-            "Solution Error",
-            "Failed to get solution. Please try again."
-        );
+      console.error("Error fetching solution:", error);
+      Alert.alert(
+        "Solution Error",
+        "Failed to get solution. Please try again."
+      );
     }
-};
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
