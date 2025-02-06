@@ -138,16 +138,22 @@ const DetectionScreen = ({ route }: any) => {
       const response = await axios.get(
         `https://greenguard-solutions-api-09584c4eab4d.herokuapp.com/api/diseases/${prediction}`
       );
-      console.log("API Response:", response.data); // Debugging log
-  
+      
       if (response.data && response.data.solution) {
-        setSolution(response.data.solution); // Correctly setting solution
+        // Navigate to SolutionScreen instead of setting state
+        navigation.navigate('Solution', {
+          diseaseName: prediction,
+          solution: response.data.solution
+        });
       } else {
         Alert.alert("No Solution Found", "No solution available for this disease.");
       }
     } catch (error) {
       console.error("Error fetching solution:", error);
-      Alert.alert("Solution Error", error.message || "Failed to get solution. Please try again.");
+      Alert.alert(
+        "Solution Error", 
+        error.message || "Failed to get solution. Please try again."
+      );
     }
   };
   

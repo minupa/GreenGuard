@@ -35,3 +35,22 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
+// Delete disease by name
+router.delete('/:name', async (req, res) => {
+  try {
+    const disease = await Disease.findOneAndDelete({ 
+      name: { $regex: new RegExp(req.params.name, 'i') }
+    });
+    
+    if (!disease) {
+      return res.status(404).json({ message: 'Disease not found' });
+    }
+    
+    res.json({ message: 'Disease deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+module.exports = router;

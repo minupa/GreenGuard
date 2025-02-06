@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CropSelectionScreen from "./Screens/CropSelectionScreen";
 import DetectionScreen from "./Screens/DetectionScreen";
+import SolutionScreen from "./Screens/SolutionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,17 +12,19 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* Remove the header for the CropSelection screen */}
         <Stack.Screen
           name="CropSelection"
           component={CropSelectionScreen}
-          options={{ headerShown: false }} // This disables the header
+          options={{ headerShown: false }}
         />
-
-        {/* Keep the header for the Detection screen */}
         <Stack.Screen
           name="Detection"
           component={DetectionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Solution"
+          component={SolutionScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
