@@ -1,4 +1,3 @@
-// SolutionScreen.tsx
 import React from 'react';
 import {
   View,
@@ -6,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -45,6 +45,9 @@ const SolutionScreen = () => {
           </View>
         </View>
       </View>
+
+      {/* Bottom Curve */}
+      <View style={styles.bottomCurve}></View>
     </ScrollView>
   );
 };
@@ -110,6 +113,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     lineHeight: 24,
+  },
+  bottomCurve: {
+    position: "static",
+    width: Dimensions.get("window").width,
+    height: 200, 
+    backgroundColor: "#4CAF50",
+    borderTopLeftRadius: 200,
+    borderTopRightRadius: 200,
+    bottom: 30,
+    marginTop: 50, 
   },
 });
 

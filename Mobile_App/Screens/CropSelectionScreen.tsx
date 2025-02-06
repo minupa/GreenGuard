@@ -278,12 +278,12 @@ const styles = StyleSheet.create({
   bottomCurve: {
     position: "static",
     width: Dimensions.get("window").width,
-    height: 200, // Adjusted size
+    height: 200, 
     backgroundColor: "#4CAF50",
     borderTopLeftRadius: 200,
     borderTopRightRadius: 200,
     bottom: 30,
-    marginTop: 50, // Positioned closer to the "Select" button
+    marginTop: 50, 
   },
 });
 
