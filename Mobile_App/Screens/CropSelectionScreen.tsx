@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import BackgroundPattern from '../components/BackgroundPattern';
 
 // Define the type for the routes in the stack navigator
 type RootStackParamList = {
@@ -32,6 +33,8 @@ const CropSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
+      <BackgroundPattern />
+
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton}>
         <Text style={styles.backArrow}>←</Text>
@@ -182,9 +185,6 @@ const CropSelectionScreen = () => {
       <TouchableOpacity style={styles.selectButton} onPress={handleSelectButton}>
         <Text style={styles.selectButtonText}>Select</Text>
       </TouchableOpacity>
-
-      {/* Bottom Curve */}
-      <View style={styles.bottomCurve}></View>
     </View>
   );
 };
@@ -196,6 +196,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
   },
+  backgroundPattern: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
+  },
+  treeIcon: {
+    position: 'absolute',
+    fontSize: 24,
+  },
   backButton: {
     position: "absolute",
     top: 40,
@@ -205,6 +215,7 @@ const styles = StyleSheet.create({
   backArrow: {
     fontSize: 18,
     color: "#000000",
+    fontFamily: "RobotoCondensed-Regular",
   },
   headerTime: {
     position: "absolute",
@@ -213,19 +224,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#001A54",
+    fontFamily: "RobotoCondensed-Bold",
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 30,
     marginTop: 80,
     color: "#000000",
+    fontFamily: "BebasNeue-Regular",
+    fontWeight: "bold",
   },
   selectionBox: {
-    backgroundColor: "#E3E3E3",
+    backgroundColor: 'rgba(227, 227, 227, 0.9)',
     width: "90%",
     borderRadius: 10,
     marginTop: 40,
     padding: 20,
+    zIndex: 1,
   },
   selectionTitle: {
     fontSize: 18,
@@ -233,6 +247,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: "RobotoCondensed-Bold",
   },
   radioOption: {
     flexDirection: "row",
@@ -256,34 +271,28 @@ const styles = StyleSheet.create({
   radioText: {
     fontSize: 16,
     color: "#6A6A6A",
+    fontFamily: "RobotoCondensed-Regular",
   },
   radioTextSelected: {
     fontSize: 16,
     fontWeight: "600",
     color: "#000000",
+    fontFamily: "RobotoCondensed-Bold",
   },
   selectButton: {
     marginTop: 30,
     width: "90%",
-    backgroundColor: "#BFFCBF",
+    backgroundColor: 'rgba(191, 252, 191, 0.9)',
     paddingVertical: 15,
     alignItems: "center",
     borderRadius: 10,
+    zIndex: 1,
   },
   selectButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#000000",
-  },
-  bottomCurve: {
-    position: "static",
-    width: Dimensions.get("window").width,
-    height: 200, 
-    backgroundColor: "#4CAF50",
-    borderTopLeftRadius: 200,
-    borderTopRightRadius: 200,
-    bottom: 30,
-    marginTop: 50, 
+    fontFamily: "RobotoCondensed-Bold",
   },
 });
 

@@ -5,9 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import BackgroundPattern from '../components/BackgroundPattern';
 
 type RouteParams = {
   diseaseName: string;
@@ -22,6 +22,11 @@ const SolutionScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
+        <BackgroundPattern 
+          numberOfElements={25}
+          opacity={0.4}
+        />
+
         {/* Top Bar with Back Button */}
         <View style={styles.topBar}>
           <TouchableOpacity
@@ -36,18 +41,13 @@ const SolutionScreen = () => {
         {/* Disease Information Card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Disease Information</Text>
-          
           <Text style={styles.diseaseName}>{diseaseName}</Text>
-          
           <View style={styles.solutionContainer}>
             <Text style={styles.solutionTitle}>Solution:</Text>
             <Text style={styles.solutionText}>{solution}</Text>
           </View>
         </View>
       </View>
-
-      {/* Bottom Curve */}
-      <View style={styles.bottomCurve}></View>
     </ScrollView>
   );
 };
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 40,
+    zIndex: 1,
   },
   backButton: {
     marginRight: 15,
@@ -81,10 +82,11 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   card: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(245, 245, 245, 0.9)',
     borderRadius: 15,
     padding: 20,
     marginTop: 10,
+    zIndex: 1,
   },
   cardTitle: {
     fontSize: 24,
@@ -113,16 +115,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     lineHeight: 24,
-  },
-  bottomCurve: {
-    position: "static",
-    width: Dimensions.get("window").width,
-    height: 200, 
-    backgroundColor: "#4CAF50",
-    borderTopLeftRadius: 200,
-    borderTopRightRadius: 200,
-    bottom: 30,
-    marginTop: 50, 
   },
 });
 

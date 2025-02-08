@@ -8,33 +8,35 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
-import { Video } from "react-native-video"; // For video preview
-import { useNavigation } from "@react-navigation/native"; // Import navigation hook
+import { Video } from "react-native-video";
+import { useNavigation } from "@react-navigation/native";
+import BackgroundPattern from '../components/BackgroundPattern';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Modal from 'react-native-modal';
 
 const DetectionScreen = ({ route }: any) => {
-  const { crop } = route.params; // Get crop parameter from route params
-  const navigation = useNavigation(); // Access the navigation object
+  const { crop } = route.params;
+  const navigation = useNavigation();
 
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [prediction, setPrediction] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [solution, setSolution] = useState<string | null>(null); // State for solution
+  const [solution, setSolution] = useState<string | null>(null);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const [isVideoModalVisible, setVideoModalVisible] = useState(false);
 
-  // URLs based on crop selection
   const URLS = {
     tea: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict",
     rice: "https://us-central1-red-abstraction-446513-u9.cloudfunctions.net/predict",
-    coconut:
-      "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
-    cinnamon:
-      "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
-    pepper:
-      "https://us-central1-tea-disease-classification.cloudfunctions.net/predict2",
+    coconut: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
+    cinnamon: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
+    pepper: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict2",
   };
 
   const PREDICTION_URL =
@@ -51,6 +53,29 @@ const DetectionScreen = ({ route }: any) => {
   useEffect(() => {
     requestPermissions();
   }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (isImageModalVisible) {
+        setImageModalVisible(false);
+        return true;
+      }
+      if (isVideoModalVisible) {
+        setVideoModalVisible(false);
+        return true;
+      }
+      // If no modals are open, handle normal back navigation
+      handleBackPress();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isImageModalVisible, isVideoModalVisible]);
 
   const requestPermissions = async () => {
     const cameraPermission = await request(
@@ -130,7 +155,15 @@ const DetectionScreen = ({ route }: any) => {
     setSelectedFile(null);
     setPrediction(null);
     setConfidence(null);
-    setSolution(null); // Clear solution when clearing selection
+    setSolution(null);
+  };
+
+  const handleBackPress = () => {
+    setSelectedFile(null);
+    setPrediction(null);
+    setConfidence(null);
+    setSolution(null);
+    navigation.navigate("CropSelection");
   };
 
   const fetchSolution = async () => {
@@ -140,7 +173,6 @@ const DetectionScreen = ({ route }: any) => {
       );
       
       if (response.data && response.data.solution) {
-        // Navigate to SolutionScreen instead of setting state
         navigation.navigate('Solution', {
           diseaseName: prediction,
           solution: response.data.solution
@@ -156,51 +188,90 @@ const DetectionScreen = ({ route }: any) => {
       );
     }
   };
-  
 
+  const renderModal = (isImage: boolean) => {
+    return (
+      <Modal
+        isVisible={isImage ? isImageModalVisible : isVideoModalVisible}
+        onBackdropPress={() => isImage ? setImageModalVisible(false) : setVideoModalVisible(false)}
+        onBackButtonPress={() => isImage ? setImageModalVisible(false) : setVideoModalVisible(false)}
+        useNativeDriver={true}
+        hideModalContentWhileAnimating={true}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <TouchableOpacity 
+            style={styles.modalOption}
+            onPress={() => {
+              isImage ? handleFileCapture("photo") : handleFileCapture("video");
+              isImage ? setImageModalVisible(false) : setVideoModalVisible(false);
+            }}
+          >
+            <Icon name="camera-alt" size={24} color="#000" />
+            <Text style={styles.modalOptionText}>
+              {isImage ? "Capture Image" : "Capture Video"}
+            </Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.modalOption}
+            onPress={() => {
+              isImage ? handleFileSelect("photo") : handleFileSelect("video");
+              isImage ? setImageModalVisible(false) : setVideoModalVisible(false);
+            }}
+          >
+            <Icon name="upload-file" size={24} color="#000" />
+            <Text style={styles.modalOptionText}>
+              {isImage ? "Upload Image" : "Upload Video"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    );
+  };
+
+  // Rest of your component remains the same...
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        {/* Top Section: Back Button and Title */}
+        <BackgroundPattern 
+          numberOfElements={25}
+          opacity={0.4}
+        />
+        
         <View style={styles.topBar}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+            onPress={handleBackPress}
           >
             <Text style={styles.backArrow}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>{crop.toUpperCase()} Disease Detection</Text>
+          <Text style={styles.title}>
+            {crop.charAt(0).toUpperCase() + crop.slice(1).toLowerCase()} Disease Detection
+          </Text>
         </View>
 
-        {/* Buttons for Capture and Upload */}
         <View style={styles.selectionBox}>
           <TouchableOpacity
-            style={styles.radioOption}
-            onPress={() => handleFileCapture("photo")}
+            style={styles.iconButton}
+            onPress={() => setImageModalVisible(true)}
           >
-            <Text style={styles.radioTextSelected}>Capture Image</Text>
+            <Icon name="camera-alt" size={32} color="#000" />
+            <Text style={styles.iconButtonText}>Image</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity
-            style={styles.radioOption}
-            onPress={() => handleFileSelect("photo")}
+            style={styles.iconButton}
+            onPress={() => setVideoModalVisible(true)}
           >
-            <Text style={styles.radioTextSelected}>Upload Image</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.radioOption}
-            onPress={() => handleFileCapture("video")}
-          >
-            <Text style={styles.radioTextSelected}>Capture Video</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.radioOption}
-            onPress={() => handleFileSelect("video")}
-          >
-            <Text style={styles.radioTextSelected}>Upload Video</Text>
+            <Icon name="videocam" size={32} color="#000" />
+            <Text style={styles.iconButtonText}>Video</Text>
           </TouchableOpacity>
         </View>
 
-        {/* File Preview */}
+        {renderModal(true)}
+        {renderModal(false)}
+
         {selectedFile && (
           <View style={styles.preview}>
             {selectedFile.type.startsWith("image/") ? (
@@ -217,7 +288,6 @@ const DetectionScreen = ({ route }: any) => {
               />
             )}
 
-            {/* Prediction Button */}
             <TouchableOpacity
               style={styles.selectButton}
               onPress={() => handleUpload(selectedFile)}
@@ -227,10 +297,8 @@ const DetectionScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* Loading Indicator */}
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
-        {/* Prediction Results */}
         {prediction && (
           <View style={styles.resultBox}>
             <Text style={styles.resultText}>Prediction: {prediction}</Text>
@@ -246,14 +314,12 @@ const DetectionScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* Solution */}
         {solution && (
           <View style={styles.solutionBox}>
             <Text style={styles.solutionText}>{solution}</Text>
           </View>
         )}
 
-        {/* Clear Selection */}
         {selectedFile && (
           <TouchableOpacity
             style={styles.clearButton}
@@ -278,40 +344,48 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   topBar: {
-    flexDirection: "row", // Align back button and title side-by-side
-    alignItems: "center", // Vertically center align
-    marginBottom: 20, // Space below the top bar
-    width: "90%", // Ensure it aligns with other content
-    marginTop: 40, // Adjust vertical margin according to your layout
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: 20,
+    width: "90%",
+    marginTop: 40,
   },
   backButton: {
-    marginRight: 15, // Add spacing between back button and title
-    padding: 5, // Slight padding for touchability
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    padding: 5,
   },
   backArrow: {
-    fontSize: 20, // Adjust arrow text size
+    fontSize: 20,
     color: "#000000",
+    fontFamily: "RobotoCondensed-Regular",
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 27,
     color: "#000",
+    fontFamily: "BebasNeue-Regular",
+    marginTop: 40,
+    fontWeight: "bold",
   },
   selectionBox: {
-    backgroundColor: "#E3E3E3",
+    backgroundColor: 'rgba(227, 227, 227, 0.9)',
     width: "90%",
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
+    zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
-  radioOption: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#D3D3D3",
+  iconButton: {
+    alignItems: 'center',
+    padding: 15,
   },
-  radioTextSelected: {
+  iconButtonText: {
+    marginTop: 5,
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed-Bold",
     color: "#000000",
   },
   preview: {
@@ -342,39 +416,49 @@ const styles = StyleSheet.create({
   },
   selectButtonText: {
     fontSize: 16,
-    fontWeight: "600",
     color: "#000000",
+    fontFamily: "AbrilFatface-Regular",
+    fontWeight: "bold",
   },
   resultBox: {
     marginTop: 20,
-    backgroundColor: "#DFF2EC",
+    backgroundColor: 'rgba(223, 242, 236, 0.9)',
     padding: 15,
     borderRadius: 10,
     width: "90%",
+    zIndex: 1,
   },
   resultText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#38761D",
+    fontFamily: "RobotoCondensed-Bold",
   },
   solutionButton: {
     padding: 10,
     backgroundColor: "#28a745",
     borderRadius: 5,
     marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   solutionButtonText: {
     color: "#fff",
+    fontFamily: "AbrilFatface-Regular",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   solutionBox: {
     padding: 10,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: 'rgba(248, 249, 250, 0.9)',
     borderRadius: 5,
     marginBottom: 16,
+    zIndex: 1,
   },
   solutionText: {
     fontSize: 16,
     color: "#000",
+    fontFamily: "RobotoCondensed-Regular",
   },
   clearButton: {
     marginTop: 20,
@@ -388,6 +472,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#721C24",
+    fontFamily: "AbrilFatface-Regular",
+  },
+  modal: {
+    margin: 0,
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalOptionText: {
+    marginLeft: 15,
+    fontSize: 16,
+    fontFamily: "RobotoCondensed-Regular",
+    color: "#000000",
   },
 });
 
