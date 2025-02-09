@@ -352,14 +352,20 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    left: 0,
-    top: 0,
-    padding: 5,
+    left: 10,
+    top: -10,                   // Bring it a little bit up
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backArrow: {
-    fontSize: 20,
-    color: "#000000",
-    fontFamily: "RobotoCondensed-Regular",
+    fontSize: 35,              // Increased size
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    lineHeight: 35,           // Match fontSize for vertical centering
+    includeFontPadding: false, // Remove extra padding
+    padding: 0,               // Remove padding
+    margin: 0,                // Remove margin
   },
   title: {
     fontSize: 27,
@@ -417,8 +423,8 @@ const styles = StyleSheet.create({
   selectButtonText: {
     fontSize: 16,
     color: "#000000",
-    fontFamily: "AbrilFatface-Regular",
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed-Bold",
+    fontWeight: "600",
   },
   resultBox: {
     marginTop: 20,
@@ -444,8 +450,8 @@ const styles = StyleSheet.create({
   },
   solutionButtonText: {
     color: "#fff",
-    fontFamily: "AbrilFatface-Regular",
-    fontWeight: "bold",
+    fontFamily: "RobotoCondensed-Bold",
+    fontWeight: "600",
     fontSize: 16,
   },
   solutionBox: {
@@ -470,9 +476,9 @@ const styles = StyleSheet.create({
   },
   clearButtonText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#721C24",
-    fontFamily: "AbrilFatface-Regular",
+    fontFamily: "RobotoCondensed-Bold",
   },
   modal: {
     margin: 0,

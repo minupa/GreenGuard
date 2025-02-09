@@ -4,13 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import BackgroundPattern from '../components/BackgroundPattern';
 
-// Define the type for the routes in the stack navigator
 type RootStackParamList = {
   CropSelection: undefined;
-  Detection: { crop: string }; // 'crop' parameter that will be passed to Detection screen
+  Detection: { crop: string };
 };
 
-// Type the navigation prop
 type CropSelectionScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "CropSelection"
@@ -33,16 +31,23 @@ const CropSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackgroundPattern />
+      <BackgroundPattern opacity={0.8} />
 
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton}>
-        <Text style={styles.backArrow}>←</Text>
-      </TouchableOpacity>
+      {/* Top Bar with Back Button */}
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backArrow}>←</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Title under back button */}
+      <Text style={styles.title}>Disease Detection</Text>
 
       {/* Header */}
       <Text style={styles.headerTime}></Text>
-      <Text style={styles.title}>Disease Detection</Text>
 
       {/* Selection Box */}
       <View style={styles.selectionBox}>
@@ -189,7 +194,6 @@ const CropSelectionScreen = () => {
   );
 };
 
-// Define styles for the screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -206,16 +210,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 24,
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 40,
+    width: '100%',
+    paddingHorizontal: 20,
+    zIndex: 1,
+  },
   backButton: {
-    position: "absolute",
-    top: 40,
-    left: 20,
-    padding: 10,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backArrow: {
-    fontSize: 18,
-    color: "#000000",
-    fontFamily: "RobotoCondensed-Regular",
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    lineHeight: 35,
+    includeFontPadding: false,
+    padding: 0,
+    margin: 0,
   },
   headerTime: {
     position: "absolute",
@@ -227,17 +243,18 @@ const styles = StyleSheet.create({
     fontFamily: "RobotoCondensed-Bold",
   },
   title: {
-    fontSize: 30,
-    marginTop: 80,
-    color: "#000000",
-    fontFamily: "BebasNeue-Regular",
-    fontWeight: "bold",
+    fontSize: 27,
+    fontWeight: '800',
+    color: '#000',
+    fontFamily: 'RobotoCondensed-Regular',
+    marginTop: 20,
+    marginBottom: 10,
   },
   selectionBox: {
     backgroundColor: 'rgba(227, 227, 227, 0.9)',
     width: "90%",
     borderRadius: 10,
-    marginTop: 40,
+    marginTop: 20,
     padding: 20,
     zIndex: 1,
   },
