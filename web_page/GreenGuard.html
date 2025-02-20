@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenGuard</title>
+  <meta name="description" content="Empowering Sri Lankan Farmers with Technology">
+  <meta name="author" content="GreenGuard">
+  <link rel="icon" type="image/jpeg" href="img.jpeg">
+  <link rel="preload" href="video.mp4" as="video" type="video/mp4">
+  <meta property="og:image" content="/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <nav id="navbar">
+      <div class="nav-container">
+        <div class="logo">
+            <img src="img.jpeg" alt="GreenGuard Logo">
+            <p class="topic">GreenGuard</p>
+        </div>
+        <div class="menu-toggle">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#crops">Crops</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="home" class="hero">   
+      <video autoplay muted loop class="video-bg" playsinline>
+        <source src="video.mp4" type="video/mp4">
+      </video>
+      <div class="hero-content">
+        <h1 class="animate-fade-in">Empowering Sri Lankan Farmers</h1>
+        <p class="animate-fade-in">
+            Revolutionizing agriculture with AI-powered crop insights.
+        </p>
+        <a href="#about" class="cta-button animate-fade-in">Get Started</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="about" class="section">
+      <div class="container">
+        <h2>Welcome to GreenGuard !!!</h2>
+        <h2>Where Technology meets Agriculture</h2>
+        <p>
+            GreenGuard revolutionizes Sri Lankan agriculture by seamlessly integrating technology with farming. Our platform provides real-time insights, AI-powered diagnostics, and data-driven solutions to help farmers optimize crop health, prevent diseases, and meet export-quality standards. By empowering farmers with smart tools, we ensure a more sustainable and profitable future for agriculture.
+
+
+        </p>
+      </div>
+    </section>
+
+    <section id="features" class="section bg-light">
+        <div class="container">
+          <h2>Key Features</h2>
+          <div class="features-grid">
+            <div class="feature-item">
+              <img src="https://media.licdn.com/dms/image/v2/D4E12AQFEFuZNOeyZJw/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1697446819001?e=2147483647&v=beta&t=nD-Hq3L1XDyhNah-cqOOPs3VxUYRkzEyywjuUpmBuYM" alt="AI-Powered Crop Disease Detection">
+              <div class="feature-content">
+                <h3>🌿 AI-Powered Crop Health Scanner</h3>
+                <p>Snap a photo or record a video of your crops and let the AI do the rest! Instantly detect plant diseases and pest issues as the smart system analyzes patterns and symptoms—saving time and boosting yields.</p>
+              </div>
+            </div>
+            <div class="feature-item reverse">
+              <img src="https://t3.ftcdn.net/jpg/09/01/14/48/360_F_901144893_Lgab3g3He7cKFD3VXN606X7Xn0AXItBl.jpg" alt="Intelligent Pest Identification">
+              <div class="feature-content">
+                <h3>🐛 Smart Pest Detector</h3>
+                <p>No more guesswork! The AI-powered detector identifies damages caused by pests or animals, giving farmers precise insights for fast, effective action.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <img src="https://artificialpaintings.com/wp-content/uploads/2024/06/458_the_influence_of_AI_on_social_media.webp" alt="Farmer Community Forum">
+              <div class="feature-content">
+                <h3>🌾 Farmer Connect: Share, Learn & Grow</h3>
+                <p>Join a thriving community of farmers! Track your crop’s journey, share updates, swap tips, and get advice from those who understand your challenges. Together, we grow better.</p>
+              </div>
+            </div>
+            <div class="feature-item reverse">
+              <img src="https://media.licdn.com/dms/image/v2/D4E12AQGOkFLIdhn02A/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1696236815710?e=2147483647&v=beta&t=3yuTbM4o_Pnf15zq4B74AAcSGg3fExC31PmJnwhJuNM" alt="Smart Data Analytics & Progress Tracking">
+              <div class="feature-content">
+                <h3>📊 Smart Data Analytics & Progress Tracking</h3>
+                <p>Make smarter moves with a dashboards! Access disease trends, environmental insights, and predictive data that empower farmers and policymakers to take decisive, data-driven actions.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <img src="https://media.licdn.com/dms/image/v2/D4E12AQHFwNG7lYIa9Q/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1718157360902?e=2147483647&v=beta&t=lSJqMaDt-92NwpDR033pmXRgTH0kNXFbty0LhYnyVII" alt="Export Readiness & Quality Assurance">
+              <div class="feature-content">
+                <h3>🌎 Global-Ready Crop Quality Checker</h3>
+                <p>Ready for the world stage? The app ensures your crops meet global export standards by evaluating quality and compliance—opening doors to international markets.</p>
+              </div>
+            </div>
+            <div class="feature-item reverse">
+              <img src="https://www.perle.com/images/articles/x_0_0_0_14119699_800.jpg" alt=" Weather Forecasting">
+              <div class="feature-content">
+                <h3> 🌞  Precision Weather Insights</h3>
+                <p>Stay ahead of the weather! Get real-time forecasts that help you plan planting, harvesting, and protection strategies—reducing risks and maximizing productivity.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <section id="crops" class="section">
+        <div class="container">
+            <h2>supported Crops</h2>
+            <div class="crops-grid">
+                <div class="crop-name">
+                    <img src="https://images.pexels.com/photos/6129010/pexels-photo-6129010.jpeg" alt="Rice">
+                    <h3>Rice</h3>
+                </div>
+                <div class="crop-name">
+                    <img src="https://marktwendell.com/cdn/shop/files/shutterstock_196959968_b311df23-d243-497e-bdc1-3078f17e1a87.webp?v=1697887880&width=1500" alt="Tea">
+                    <h3>Tea</h3>
+                </div>
+                <div class="crop-name">
+                    <img src="https://media.post.rvohealth.io/wp-content/uploads/2020/09/health-benefits-cinnamon-fb-1200x628.jpg" alt="Cinnamon">
+                    <h3>Cinnamon</h3>
+                </div>
+                <div class="crop-name">
+                    <img src="https://media.istockphoto.com/id/480691906/photo/rubber-latex-collected-in-bowl.jpg?s=612x612&w=0&k=20&c=F_VzQcYBG7NiIIbr2X_YBABFQ75oGOaBkayqyjngD9w=" alt="Rubber">
+                    <h3>Rubber</h3>
+                </div>
+                <div class="crop-name">
+                    <img src="https://m.media-amazon.com/images/I/71bL26igmPL.jpg" alt="Coconut">
+                    <h3>Coconut</h3>
+                </div>
+                <div class="crop-name">
+                    <img src="https://www.thukralfoods.com/wp-content/uploads/2022/03/black-pepper-1.jpg" alt="Black pepper">
+                    <h3>Black Pepper</h3>
+                </div>
+            </div>
+    </section>            
+      
+
+    <section id="team" class="section bg-light">
+      <div class="container">
+        <h2>Meet Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <img src="img.jpeg" alt="Nilinya Samaranayake">
+                <h3>Nilinya Samaranayake</h3>
+                <p>Project Manager</p>
+                <a href="" target="_blank">
+                <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+            <div class="team-member">
+                <img src="pics/adithya.jpeg" alt="Kithmina Adithya">
+                <h3>Kithmina Adithya</h3>
+                <p>Mobile Developer</p>
+                <a href="www.linkedin.com/in/kithmina-adithya-852b88332" target="_blank">
+                    <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+            <div class="team-member">
+                <img src="img.jpeg" alt="Thisul Bimsara">
+                <h3>Thisul Bimsara</h3>
+                <p>Backend Developer</p>
+                <a href="www.linkedin.com/in/thisul-bimsara-a28357340" target="_blank">
+                    <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+            <div class="team-member">
+                <img src="pics/poorna.jpeg" alt="Poorna Kahandakorala">
+                <h3>Poorna Kahandakorala</h3>
+                <p>Mobile Developer</p>
+                <a href="www.linkedin.com/in/poorna-kahandakorala-927710264/" target="_blank">
+                    <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+            <div class="team-member">
+                <img src="pics/eshan.jpeg" alt="Eshan Perera">
+                <h3>Eshan Perera</h3>
+                <p>Backend Developer</p>
+                <a href="" target="_blank">
+                    <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+            <div class="team-member">
+                <img src="pics/minupa.jpg" alt="Minupa Abeysinghe">
+                <h3>Minupa Abeysinghe</h3>
+                <p>Frontend Developer</p>
+                <a href="https://www.linkedin.com/in/minupa/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank">
+                    <img class="badge" src="https://img.icons8.com/ios11/512/linkedin.png" alt="Badge"></a>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section bg-light">
+      <div class="container">
+        <h2>Contact Us</h2>
+        <p>Have questions? We'd love to hear from you.</p>
+        <br>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=greenguard623@gmail.com" class="contact-button" target="_blank">Email Us</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+        <div class="logo-group">
+            <img src="img.jpeg" alt="GreenGuard Logo">
+            <p class="topic">GreenGuard</p>
+            </div>
+        </div>  
+        <div class="quick-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#crops">Crops</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#contacts">Contact</a></li>
+                </ul>
+        </div> 
+      <h3>GreenGuard</h3>
+      <p>Empowering farmers with innovative technology !</p>
+      <div class="social-links">
+        <a href="https://www.instagram.com/green_guard128/?utm_source=ig_web_button_share_sheet" class="social-link" target="_blank">instagram</a>
+        <a href="https://www.facebook.com/share/1DJniFiL1v/?mibextid=wwXIfr" class="social-link" target="_blank">Facebook</a>
+        <a href="#" class="social-link" target="_blank">LinkedIn</a>
+      </div>
+      <p class="copyright">© 2025 GreenGuard. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <button id="scrollToTop" aria-label="Scroll to top">↑</button>
+  <script src="script.js"></script>
+</body>
+</html>
