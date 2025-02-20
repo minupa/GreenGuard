@@ -7,10 +7,10 @@ import {
   Animated,
   Dimensions,
   ScrollView,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
-import BackgroundPattern from '../components/BackgroundPattern';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -53,7 +53,7 @@ const HomeScreen = () => {
         style={styles.featureIconContainer} 
         onPress={onPress}
       >
-        <View style={styles.iconGradientWrapper}>
+        <View style={[styles.iconGradientWrapper, styles.buttonContainer]}>
           <LinearGradient 
             colors={['#2ecc71', '#28a745', '#20bf6b']} 
             style={styles.iconGradientWrapper}
@@ -73,13 +73,17 @@ const HomeScreen = () => {
     );
   };
 
+  const ImageButton = ({ source, title, onPress }) => (
+    <View style={styles.imageBox}>
+      <Text style={[styles.imageButtonLabel, { alignSelf: 'flex-start' }]}>{title}</Text>
+      <TouchableOpacity style={styles.imageButton} onPress={onPress}>
+        <Image source={source} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <BackgroundPattern 
-        numberOfElements={25}
-        opacity={0.4}
-      />
-
       {/* Main Content */}
       <View style={styles.content}>
         {/* Top Bar */}
@@ -110,6 +114,20 @@ const HomeScreen = () => {
             label="Dashboard" 
             onPress={() => navigation.navigate('Dashboard')} 
             iconType="MaterialCommunityIcons"
+          />
+        </View>
+
+        {/* Image Buttons */}
+        <View style={styles.imageButtonRow}>
+          <ImageButton 
+            source={require('../assets/weather.jpg')} 
+            title="Weather" 
+            onPress={() => navigation.navigate('Weather')} 
+          />
+          <ImageButton 
+            source={require('../assets/quality.jpg')} 
+            title="Daily rates and Quality" 
+            onPress={() => navigation.navigate('Quality')} 
           />
         </View>
       </View>
@@ -227,9 +245,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   featureIconLabel: {
     fontSize: 13,
@@ -237,6 +252,44 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'RobotoCondensed-Regular',
     textAlign: 'center',
+  },
+  imageButtonRow: {
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  imageBox: {
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
+  },
+  imageButton: {
+    alignItems: 'center',
+    width: '100%',
+    height: 140,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
+    elevation: 24,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  imageButtonLabel: {
+    fontSize: 16,
+    color: '#2C3E50',
+    fontFamily: 'RobotoCondensed-Regular',
+    textAlign: 'left',
+    marginBottom: 10,
   },
   sidebar: {
     position: 'absolute',
@@ -292,6 +345,25 @@ const styles = StyleSheet.create({
   topBarHomeIcon: {
     fontSize: 28,
     color: '#2C3E50',
+  },
+  buttonContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+  },
+  iconButtonContainer: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+  },
+  iconButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

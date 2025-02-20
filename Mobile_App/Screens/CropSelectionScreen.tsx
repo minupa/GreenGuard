@@ -37,7 +37,7 @@ const CropSelectionScreen = () => {
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.navigate('Home')}
         >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>

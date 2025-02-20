@@ -32,11 +32,11 @@ const DetectionScreen = ({ route }: any) => {
   const [isVideoModalVisible, setVideoModalVisible] = useState(false);
 
   const URLS = {
-    tea: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict",
-    rice: "https://us-central1-red-abstraction-446513-u9.cloudfunctions.net/predict",
-    coconut: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict",
-    cinnamon: "https://us-central1-crack-glider-449515-f7.cloudfunctions.net/predict2",
-    pepper: "https://us-central1-tea-disease-classification.cloudfunctions.net/predict2",
+    tea: "https://poorna95-tea-disease-classification.hf.space/predict",
+    rice: "https://poorna95-rice-disease-classification.hf.space/predict",
+    coconut: "https://poorna95-coconut-disease-classifier.hf.space/predict",
+    cinnamon: "https://poorna95-cinnamon-disease-classification.hf.space/predict",
+    pepper: "https://poorna95-blackpepper-disease-classification.hf.space/predict",
   };
 
   const PREDICTION_URL =
