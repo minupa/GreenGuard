@@ -10,6 +10,7 @@ type CropRate = {
   name: string;
   price: number;
   unit: string;
+  lastUpdated: string;
 };
 
 const DailyRatesScreen = ({ navigation }) => {
@@ -20,16 +21,27 @@ const DailyRatesScreen = ({ navigation }) => {
 
   const fetchRates = async () => {
     try {
-      const response = await axios.get('http://10.0.2.2:3001/rates');
-      setRates(response.data);  
-      setLastUpdated(moment().format('DD MMM YYYY hh:mm A'));
+      const response = await axios.get('https://67b83103699a8a7baef3061a.mockapi.io/rates');
+      setRates(response.data);
+  
+      if (response.data.length > 0) {
+        const latestUpdate = response.data[0].lastUpdated; // Get the lastUpdated from the first item
+        console.log('Raw lastUpdated:', latestUpdate);  // Log the raw value to debug
+  
+        // Keep the time in UTC and format it
+        const formattedDate = moment.utc(latestUpdate).format('DD MMM YYYY hh:mm A');
+        console.log('Formatted lastUpdated (UTC):', formattedDate); // Log the formatted date
+        setLastUpdated(formattedDate); // Set formatted date
+      }
     } catch (error) {
-      console.error('Error fetching rates:', error);
+      console.error('Error fetching rates:', error.response ? error.response.data : error.message);
       setError('Failed to load rates. Check server connection');
     } finally {
       setRefreshing(false);
     }
   };
+  
+   
 
   useEffect(() => {
     fetchRates();     
