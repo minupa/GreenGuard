@@ -1,4 +1,5 @@
 import requests
+import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -87,7 +88,10 @@ def weather_view():
         city=input('Enter any city name: ')
         current_weather=get_current_weather(city)
 
-        historical_data=read_historical_data('weather\weather.csv')
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        csv_path = os.path.join(base_path, 'weather.csv')  
+
+        historical_data = read_historical_data(csv_path)
 
         x,y,le=prepare_data(historical_data)
         
