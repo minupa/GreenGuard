@@ -1,0 +1,46 @@
+{
+  "rates": [
+    {
+      "id": "1",
+      "name": "Tea",
+      "price": 220,
+      "unit": "kg",
+      "quality": "Premium Grade"
+    },
+    {
+      "id": "2",
+      "name": "Rubber",
+      "price": 320,
+      "unit": "kg",
+      "quality": "Grade 1 RSS"
+    },
+    {
+      "id": "3",
+      "name": "Coconut",
+      "price": 45,
+      "unit": "nut",
+      "quality": "Large Size"
+    },
+    {
+      "id": "4",
+      "name": "Black Pepper",
+      "price": 1800,
+      "unit": "kg",
+      "quality": "MG1 Grade"
+    },
+    {
+      "id": "5",
+      "name": "Rice",
+      "price": 95,
+      "unit": "kg",
+      "quality": "Samba Super"
+    },
+    {
+      "id": "6",
+      "name": "Cinnamon",
+      "price": 2500,
+      "unit": "kg",
+      "quality": "Alba Grade"
+    }
+  ]
+}

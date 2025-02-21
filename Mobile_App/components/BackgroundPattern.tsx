@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface BackgroundPatternProps {
@@ -12,18 +12,31 @@ const BackgroundPattern = ({
   opacity = 0.4,
   icon = '🌿'
 }: BackgroundPatternProps) => {
+  // Generate pattern positions once when component mounts
+  const patternElements = useMemo(() => {
+    return [...Array(numberOfElements)].map((_, index) => ({
+      id: index,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      rotation: `${Math.random() * 360}deg`
+    }));
+  }, [numberOfElements]); // Only regenerate if numberOfElements changes
+
   return (
     <View style={[styles.backgroundPattern, { opacity }]}>
-      {[...Array(numberOfElements)].map((_, index) => (
-        <Text key={index} style={[
-          styles.icon,
-          {
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: opacity,
-            transform: [{ rotate: `${Math.random() * 360}deg` }]
-          }
-        ]}>
+      {patternElements.map((element) => (
+        <Text
+          key={element.id}
+          style={[
+            styles.icon,
+            {
+              top: element.top,
+              left: element.left,
+              opacity: opacity,
+              transform: [{ rotate: element.rotation }]
+            }
+          ]}
+        >
           {icon}
         </Text>
       ))}

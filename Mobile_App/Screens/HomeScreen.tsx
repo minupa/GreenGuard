@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DailyRatesScreen from './DailyRatesScreen';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -126,8 +127,8 @@ const HomeScreen = () => {
           />
           <ImageButton 
             source={require('../assets/quality.jpg')} 
-            title="Daily rates and Quality" 
-            onPress={() => navigation.navigate('Quality')} 
+            title="Daily rates and Quality"
+            onPress={() => navigation.navigate('DailyRates')}
           />
         </View>
       </View>

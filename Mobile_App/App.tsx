@@ -8,6 +8,7 @@ import SolutionScreen from "./Screens/SolutionScreen";
 import LoginScreen from "./Screens/LoginScreen";
 import SignupScreen from "./Screens/SignupScreen";
 import HomeScreen from './Screens/HomeScreen';
+import DailyRatesScreen from './Screens/DailyRatesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,11 @@ const App = () => {
         <Stack.Screen 
           name="Solution" 
           component={SolutionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name="DailyRates" 
+          component={DailyRatesScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
