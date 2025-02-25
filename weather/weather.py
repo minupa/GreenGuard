@@ -203,6 +203,18 @@ def weather_view():
         print(f"Pressure: {current_weather['pressure']} hPa")
         print("==============================\n")
 
+        rain_prediction = rain_model.predict(current_df)[0]
+
+        # Convert to percentage (ensure it's between 0% and 100%)
+        rain_probability = max(0, min(100, round(rain_prediction * 100)))
+
+        # Convert to Yes/No based on a threshold (e.g., > 50% means it will rain)
+        will_rain = "Yes" if rain_probability > 50 else "No"
+
+        print(f"\nRain Probability: {rain_probability}%")
+        print(f"Will it rain tomorrow? {will_rain}")
+
+
         print('\n Future Temperature Predictions:')
         for time, temp in zip(future_times, future_temp):
             print(f"{time}: {round(temp, 1)} °C")
