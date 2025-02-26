@@ -1,4 +1,5 @@
 import requests
+import json
 import os
 import pandas as pd
 import numpy as np
@@ -11,6 +12,8 @@ import pytz
 import matplotlib.pyplot as plt
 from opencage.geocoder import OpenCageGeocode
 import geocoder
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 # API Keys
 OpenWeather_API_Key = 'f936f8e8a5231a6b7e6da388e54cfc1e'
@@ -27,7 +30,9 @@ def get_current_location():
         components = result[0]['components']
         city = components.get('city', components.get('town', components.get('village', 'N/A')))
         country = components.get('country', 'N/A')
-        print(f"\n📍 Detected Country: {country}")
+        with open("debug.log", "a") as f:  
+            f.write(f"Detected Country: {country}\n")  
+
         return city
     else:
         print("Unable to detect location.")
@@ -41,21 +46,7 @@ def get_current_weather(city):
         response.raise_for_status()
         data = response.json()
 
-        weather_icons = {
-            "clear sky": "☀️",
-            "few clouds": "🌤️",
-            "scattered clouds": "⛅",
-            "broken clouds": "🌥️",
-            "shower rain": "🌦️",
-            "rain": "🌧️",
-            "thunderstorm": "⛈️",
-            "snow": "❄️",
-            "mist": "🌫️"
-        }
-
         description = data['weather'][0]['description']
-        icon = weather_icons.get(description.lower(), "🌈")
-
         return {
             'city': data['name'],
             'current_temp': round(data['main']['temp']),
@@ -63,7 +54,7 @@ def get_current_weather(city):
             'temp_min': round(data['main']['temp_min']),
             'temp_max': round(data['main']['temp_max']),
             'humidity': round(data['main']['humidity']),
-            'description': f"{description.capitalize()} {icon}",
+            'description': f"{description.capitalize()}",
             'country': data['sys']['country'],
             'wind_gust_dir': data['wind']['deg'],
             'pressure': data['main']['pressure'],
@@ -76,7 +67,6 @@ def get_current_weather(city):
         print("City not found. Please check the name and try again.")
         return None
 
-# 📊 Data processing and model training
 def read_historical_data(filename):
     df = pd.read_csv(filename)
     df = df.dropna().drop_duplicates()
@@ -95,7 +85,9 @@ def train_rain_model(x, y):
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(x_train, y_train.values.ravel())
     y_pred = model.predict(x_test)
-    print(' Mean squared error for Rain model:', mean_squared_error(y_test, y_pred))
+    with open("debug.log", "a") as f:  
+        f.write(f"Mean squared error for Rain model: {mean_squared_error(y_test, y_pred)}\n")  
+
     return model
 
 def prepare_regression_data(data, feature):
@@ -129,115 +121,92 @@ def visualize_predictions(times, temps, humidities):
     fig.suptitle('Future Temperature and Humidity Predictions')
     plt.show()
 
-#  Main weather view function
 def weather_view():
-    while True:
+    # Check if a city was provided as an argument
+    city = sys.argv[1] if len(sys.argv) > 1 else get_current_location()
 
-        city = get_current_location()
-        if city is None:
-            city = input('Enter any city name: ').strip()
-            if not city:
-                print("City name cannot be empty.")
-                return
+    if not city:
+        print(json.dumps({"error": "City name is required"}))
+        return
 
-        current_weather = get_current_weather(city)
-        if current_weather is None:
-            return
+    current_weather = get_current_weather(city)
+    if current_weather is None:
+        print(json.dumps({"error": "Weather data not available"}))
+        return
 
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(base_path, 'weather.csv')
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(base_path, 'weather.csv')
 
-        historical_data = read_historical_data(csv_path)
-        x, y, le = prepare_data(historical_data)
-        rain_model = train_rain_model(x, y)
+    historical_data = read_historical_data(csv_path)
+    x, y, le = prepare_data(historical_data)
+    rain_model = train_rain_model(x, y)
 
-        wind_deg=current_weather['wind_gust_dir']%360
-        compass_points=[
-            ("N",0,11.25),("NNE",11.25, 33.75), ("NE", 33.75, 56.25),("ENE", 56.25, 78.75),
-            ("E", 78.75, 101.25), ("ESE", 101.25, 123.75), ("SE", 123.75, 146.25), ("SSE",146.25, 168.75),
-            ("S", 168.75, 191.25), ("SSW", 191.25, 213.75), ("SW", 213.75, 236.25), ("WSW", 236.25, 258.75),
-            ("W", 258.75, 281.25), ("WNW", 281.25, 303.75), ("NW", 303.75, 326.25), ("NNW", 326.25, 348.75)
-        ]
+    # Wind direction processing
+    wind_deg = current_weather['wind_gust_dir'] % 360
+    compass_points = [
+        ("N", 0, 11.25), ("NNE", 11.25, 33.75), ("NE", 33.75, 56.25),
+        ("ENE", 56.25, 78.75), ("E", 78.75, 101.25), ("ESE", 101.25, 123.75),
+        ("SE", 123.75, 146.25), ("SSE", 146.25, 168.75), ("S", 168.75, 191.25),
+        ("SSW", 191.25, 213.75), ("SW", 213.75, 236.25), ("WSW", 236.25, 258.75),
+        ("W", 258.75, 281.25), ("WNW", 281.25, 303.75), ("NW", 303.75, 326.25),
+        ("NNW", 326.25, 348.75)
+    ]
+    compass_direction = next(point for point, start, end in compass_points if start <= wind_deg < end)
+    compass_direction_encoded = le.transform([compass_direction])[0] if compass_direction in le.classes_ else -1
 
-        compass_direction=next(point for point, start, end in compass_points if start<= wind_deg<end)
+    # Prepare DataFrame for prediction
+    current_df = pd.DataFrame([{
+        'MinTemp': current_weather['temp_min'],
+        'MaxTemp': current_weather['temp_max'],
+        'WindGustDir': compass_direction_encoded,
+        'WindGustSpeed': current_weather['WindGustSpeed'],
+        'Humidity': current_weather['humidity'],
+        'Pressure': current_weather['pressure'],
+        'Temp': current_weather['current_temp'],
+    }])
 
-        compass_direction_encoded=le.transform([compass_direction])[0] if compass_direction in le.classes_ else -1
+    # Rain prediction
+    rain_prediction = rain_model.predict(current_df)[0]
+    rain_probability = max(0, min(100, round(rain_prediction * 100)))
+    will_rain = "Yes" if rain_probability > 50 else "No"
 
+    # Future weather predictions
+    x_temp, y_temp = prepare_regression_data(historical_data, 'Temp')
+    x_hum, y_hum = prepare_regression_data(historical_data, 'Humidity')
+    temp_model, hum_model = train_regression_model(x_temp, y_temp), train_regression_model(x_hum, y_hum)
+    future_temp = predict_future(temp_model, current_weather['temp_min'])
+    future_humidity = predict_future(hum_model, current_weather['humidity'])
 
+    # Time formatting
+    timezone = pytz.timezone('Asia/Colombo')
+    now = datetime.now(timezone)
+    future_times = [(now + timedelta(hours=i+1)).strftime("%H:00") for i in range(5)]
 
-        current_df = pd.DataFrame([{
-            'MinTemp': current_weather['temp_min'],
-            'MaxTemp': current_weather['temp_max'],
-            'WindGustDir': compass_direction_encoded,
-            'WindGustSpeed': current_weather['WindGustSpeed'],
-            'Humidity': current_weather['humidity'],
-            'Pressure': current_weather['pressure'],
-            'Temp': current_weather['current_temp'],
-        }])
+    # Create response JSON
+    response = {
+        "city": current_weather['city'],
+        "country": current_weather['country'],
+        "current_temp": current_weather['current_temp'],
+        "feels_like": current_weather['feels_like'],
+        "temp_min": current_weather['temp_min'],
+        "temp_max": current_weather['temp_max'],
+        "humidity": current_weather['humidity'],
+        "description": current_weather['description'],
+        "WindGustSpeed": current_weather['WindGustSpeed'],
+        "wind_direction": compass_direction,
+        "wind_gust_dir": current_weather['wind_gust_dir'],
+        "pressure": current_weather['pressure'],
+        "rain_probability": rain_probability,
+        "will_rain": will_rain,
+        "future_forecast": {
+            "times": future_times,
+            "temperature": [round(temp, 1) for temp in future_temp],
+            "humidity": [round(hum, 1) for hum in future_humidity]
+        }
+    }
 
-        rain_prediction = rain_model.predict(current_df)[0]
-        x_temp, y_temp = prepare_regression_data(historical_data, 'Temp')
-        x_hum, y_hum = prepare_regression_data(historical_data, 'Humidity')
-        temp_model, hum_model = train_regression_model(x_temp, y_temp), train_regression_model(x_hum, y_hum)
-
-        future_temp = predict_future(temp_model, current_weather['temp_min'])
-        future_humidity = predict_future(hum_model, current_weather['humidity'])
-
-        timezone = pytz.timezone('Asia/Colombo')
-        now = datetime.now(timezone)
-        next_hour = now + timedelta(hours=1)
-        next_hour = next_hour.replace(minute=0, second=0, microsecond=0)
-        future_times = [(next_hour + timedelta(hours=i)).strftime("%H:00") for i in range(5)]
-
-        print("\n==============================")
-        print(f"Data retrieved at: {now.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Location: {current_weather['city']}, {current_weather['country']}")
-        print(f"Current Temperature: {current_weather['current_temp']} °C")
-        print(f"Feels Like: {current_weather['feels_like']} °C")
-        print(f"Min Temperature: {current_weather['temp_min']} °C")
-        print(f"Max Temperature: {current_weather['temp_max']} °C")
-        print(f"Humidity: {current_weather['humidity']} %")
-        print(f"Weather Description: {current_weather['description']}")
-        print(f"Wind Speed: {current_weather['WindGustSpeed']} m/s")
-        print(f"Wind Direction: {compass_direction} {current_weather['wind_gust_dir']}°")
-        print(f"Pressure: {current_weather['pressure']} hPa")
-        print("==============================\n")
-
-        rain_prediction = rain_model.predict(current_df)[0]
-
-        # Convert to percentage (ensure it's between 0% and 100%)
-        rain_probability = max(0, min(100, round(rain_prediction * 100)))
-
-        # Convert to Yes/No based on a threshold (e.g., > 50% means it will rain)
-        will_rain = "Yes" if rain_probability > 50 else "No"
-
-        print(f"\nRain Probability: {rain_probability}%")
-        print(f"Will it rain tomorrow? {will_rain}")
-
-
-        print('\n Future Temperature Predictions:')
-        for time, temp in zip(future_times, future_temp):
-            print(f"{time}: {round(temp, 1)} °C")
-
-        print("\n Future Humidity Predictions:")
-        for time, humidity in zip(future_times, future_humidity):
-            print(f"{time}: {round(humidity, 1)} %")
-
-        show_chart = input("Do you want to see the weather prediction chart? (yes/no): ").strip().lower()
-
-        if show_chart == 'yes':
-            visualize_predictions(future_times, future_temp, future_humidity)
-        else:
-            print("Skipping visualization. Continuing with the program...")
-
-
-        another_city = input("Do you want to check another city's weather? (yes/no): ").strip().lower()
-        if another_city != 'yes':
-            print("Exiting weather search. Stay safe!")
-            break
-
-        city = input("Enter another city name: ").strip()
-
+    print(json.dumps(response))  # Return JSON to Node.js
 
 if __name__ == "__main__":
     weather_view()
+
