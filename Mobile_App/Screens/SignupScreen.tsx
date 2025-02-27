@@ -7,9 +7,11 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
+import authService from '../services/authService';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -42,7 +44,7 @@ const SignupScreen = () => {
     );
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     // Validation
     if (Object.values(formData).some(value => !value)) {
       Alert.alert('Error', 'Please fill in all fields');
@@ -61,20 +63,32 @@ const SignupScreen = () => {
 
     setLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+      // Call the register API with the format expected by the backend
+      const userData = {
+        fullName: formData.fullName,
+        age: parseInt(formData.age),
+        address: formData.address,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        selectedCrops
+      };
+      
+      const result = await authService.register(userData);
+      
+      if (result.success) {
+        Alert.alert('Success', 'Account created successfully', [
+          { text: 'OK', onPress: () => navigation.navigate('Home') }
+        ]);
+      } else {
+        Alert.alert('Error', result.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      Alert.alert('Error', 'An error occurred during registration');
+    } finally {
       setLoading(false);
-      Alert.alert(
-        'Success',
-        'Account created successfully',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Login')
-          }
-        ]
-      );
-    }, 1000);
+    }
   };
 
   return (
@@ -173,9 +187,11 @@ const SignupScreen = () => {
             onPress={handleSignup}
             disabled={loading}
           >
-            <Text style={styles.signupButtonText}>
-              {loading ? 'Creating Account...' : 'Sign Up'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#000000" />
+            ) : (
+              <Text style={styles.signupButtonText}>Sign Up</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -282,4 +298,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignupScreen; 
+export default SignupScreen;

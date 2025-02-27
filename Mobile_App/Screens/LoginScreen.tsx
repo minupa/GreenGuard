@@ -6,15 +6,11 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
-
-// Mock user data for demonstration
-const MOCK_USER = {
-  phoneNumber: '1234567890',
-  password: 'password123'
-};
+import authService from '../services/authService';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -22,7 +18,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!phoneNumber || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -30,15 +26,23 @@ const LoginScreen = () => {
 
     setLoading(true);
     
-    // Simulate API delay
-    setTimeout(() => {
-      if (phoneNumber === MOCK_USER.phoneNumber && password === MOCK_USER.password) {
-        navigation.navigate('Home');
+    try {
+      // Call the login API
+      const result = await authService.login(phoneNumber, password);
+      
+      if (result.success) {
+        Alert.alert('Success', 'Login successful!', [
+          { text: 'OK', onPress: () => navigation.navigate('Home') }
+        ]);
       } else {
-        Alert.alert('Error', 'Invalid credentials');
+        Alert.alert('Error', result.message || 'Login failed');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', 'An error occurred during login');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
