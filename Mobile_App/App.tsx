@@ -12,6 +12,7 @@ import UserProfileScreen from './Screens/UserProfileScreen';
 import EditProfileScreen from './Screens/EditProfileScreen';
 import CommunityScreen from './Screens/CommunityScreen';
 import CommentsScreen from './Screens/CommentsScreen';
+import CreatePostScreen from './Screens/CreatePostScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="CreatePost" component={CreatePostScreen}options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />

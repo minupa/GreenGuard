@@ -1,16 +1,6 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  TouchableOpacity, 
-  Image, 
-  TextInput,
-  KeyboardAvoidingView,
-  Platform
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Post {
@@ -18,19 +8,13 @@ interface Post {
   userId: string;
   user: string;
   content: string;
-  image?: string;
   likes: number;
-  comments: Comment[];
+  comments: number;
   avatar: string;
 }
 
-interface Comment {
-  id: string;
-  user: string;
-  text: string;
-}
-
 const CommunityScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation();
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -38,12 +22,8 @@ const CommunityScreen = () => {
       userId: 'user1',
       user: 'Farmer123',
       content: 'Anyone experiencing leaf curl in citrus plants?',
-      image: 'https://picsum.photos/400/300',
       likes: 12,
-      comments: [
-        { id: 'c1', user: 'AgriExpert', text: 'This could be citrus canker' },
-        { id: 'c2', user: 'FarmerRaj', text: 'Try neem oil spray' }
-      ],
+      comments: 4,
       avatar: 'https://picsum.photos/200',
     },
     {
@@ -51,70 +31,22 @@ const CommunityScreen = () => {
       userId: 'user2',
       user: 'AgriExpert',
       content: 'New organic pesticide working great!',
-      image: 'https://picsum.photos/401/300',
       likes: 25,
-      comments: [],
+      comments: 8,
       avatar: 'https://picsum.photos/201',
     },
   ]);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-  const [commentText, setCommentText] = useState('');
 
-  const handleLike = (postId: string) => {
-    setPosts(prevPosts => 
-      prevPosts.map(post => {
-        if (post.id === postId) {
-          const increment = likedPosts.has(postId) ? -1 : 1;
-          return { ...post, likes: post.likes + increment };
-        }
-        return post;
-      })
-    );
-    
-    setLikedPosts(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(postId)) {
-        newSet.delete(postId);
-      } else {
-        newSet.add(postId);
-      }
-      return newSet;
-    });
-  };
-
-  const handleAddComment = (postId: string) => {
-    if (!commentText.trim()) return;
-
-    setPosts(prevPosts => 
-      prevPosts.map(post => {
-        if (post.id === postId) {
-          return {
-            ...post,
-            comments: [
-              ...post.comments,
-              {
-                id: Date.now().toString(),
-                user: 'CurrentUser',
-                text: commentText
-              }
-            ]
-          };
-        }
-        return post;
-      })
-    );
-    setCommentText('');
-  };
-
-  const handleViewComments = (post: Post) => {
-    navigation.navigate('Comments', { post });
-  };
+  // Handle new post addition
+  useEffect(() => {
+    if (route.params?.newPost) {
+      setPosts(prevPosts => [route.params.newPost, ...prevPosts]);
+      navigation.setParams({ newPost: null });
+    }
+  }, [route.params?.newPost]);
 
   const handleViewProfile = (userId: string) => {
-    navigation.navigate('Profile', { 
-      userId,
-      isEditable: false 
-    });
+    navigation.navigate('Profile', { userId, isEditable: false });
   };
 
   const renderPost = ({ item }: { item: Post }) => (
@@ -130,66 +62,23 @@ const CommunityScreen = () => {
           <Text style={styles.userBadge}>Verified Farmer</Text>
         </View>
       </TouchableOpacity>
-      
       <Text style={styles.postContent}>{item.content}</Text>
-      
-      {item.image && (
-        <Image 
-          source={{ uri: item.image }} 
-          style={styles.postImage}
-          resizeMode="cover"
-        />
-      )}
-
       <View style={styles.postFooter}>
-        <TouchableOpacity 
-          style={styles.interactionButton}
-          onPress={() => handleLike(item.id)}
-        >
-          <Icon 
-            name={likedPosts.has(item.id) ? "thumb-up" : "thumb-up-outline"} 
-            size={20} 
-            color={likedPosts.has(item.id) ? "#4CAF50" : "#666"} 
-          />
-          <Text style={[
-            styles.interactionText,
-            { color: likedPosts.has(item.id) ? "#4CAF50" : "#666" }
-          ]}>
-            {item.likes}
-          </Text>
+        <TouchableOpacity style={styles.interactionButton}>
+          <Icon name="thumb-up-outline" size={20} color="#666" />
+          <Text style={styles.interactionText}>{item.likes}</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.interactionButton}
-          onPress={() => handleViewComments(item)}
-        >
+        <TouchableOpacity style={styles.interactionButton}>
           <Icon name="comment-outline" size={20} color="#666" />
-          <Text style={styles.interactionText}>{item.comments.length}</Text>
+          <Text style={styles.interactionText}>{item.comments}</Text>
         </TouchableOpacity>
       </View>
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.commentInputContainer}
-      >
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Add a comment..."
-          value={commentText}
-          onChangeText={setCommentText}
-        />
-        <TouchableOpacity 
-          style={styles.commentButton}
-          onPress={() => handleAddComment(item.id)}
-        >
-          <Text style={styles.commentButtonText}>Post</Text>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Community Discussions</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Profile', { 
@@ -200,12 +89,21 @@ const CommunityScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Posts List */}
       <FlatList
         data={posts}
         renderItem={renderPost}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}
       />
+
+      {/* Floating "Create Post" Button */}
+      <TouchableOpacity 
+        style={styles.newPostButton}
+        onPress={() => navigation.navigate('CreatePost')}
+      >
+        <Icon name="plus" size={24} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -271,16 +169,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
-  postImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginVertical: 12,
-  },
   postFooter: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 12,
   },
   interactionButton: {
     flexDirection: 'row',
@@ -289,31 +180,19 @@ const styles = StyleSheet.create({
   },
   interactionText: {
     marginLeft: 8,
+    color: '#666',
   },
-  commentInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  commentInput: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  commentButton: {
+  newPostButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
     backgroundColor: '#4CAF50',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  commentButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
   },
 });
 
