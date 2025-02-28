@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
-import authService from '../services/authService';
+import * as authService from '../services/authService';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -31,15 +31,32 @@ const LoginScreen = () => {
       const result = await authService.login(phoneNumber, password);
       
       if (result.success) {
-        Alert.alert('Success', 'Login successful!', [
-          { text: 'OK', onPress: () => navigation.navigate('Home') }
-        ]);
+        if (result.localOnly) {
+          // This is a local-only login (for development)
+          Alert.alert(
+            'Local Login',
+            'Logged in using local storage. Server connection unavailable.',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
+        } else {
+          // This is a server-authenticated login
+          Alert.alert(
+            'Success',
+            'Login successful!',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
+        }
       } else {
-        Alert.alert('Error', result.message || 'Login failed');
+        // Handle specific error codes
+        if (result.statusCode === 404) {
+          Alert.alert('Server Error', 'The login service is unavailable. The backend may be offline.');
+        } else {
+          Alert.alert('Error', result.message || 'Login failed');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Error', 'An error occurred during login');
+      Alert.alert('Error', 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -74,7 +91,7 @@ const LoginScreen = () => {
           disabled={loading}
         >
           <Text style={styles.loginButtonText}>
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? <ActivityIndicator size="small" color="#000000" /> : 'Login'}
           </Text>
         </TouchableOpacity>
 
@@ -141,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen; 
+export default LoginScreen;

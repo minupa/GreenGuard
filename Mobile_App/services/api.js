@@ -1,10 +1,14 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Always use production API
-const API_URL = 'https://gg-mobileapp-backend.vercel.app/api';
+// API URL configuration
+const PRODUCTION_API_URL = 'https://gg-mobileapp-backend.vercel.app/api';
+const LOCAL_API_URL = 'http://localhost:3000/api';
 
-console.log('Using production API URL:', API_URL);
+// Choose API URL based on environment - use production for deployment
+const API_URL = PRODUCTION_API_URL;
+
+console.log('Using API URL:', API_URL);
 
 // Create axios instance
 const api = axios.create({

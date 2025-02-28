@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
-import authService from '../services/authService';
+import * as authService from '../services/authService';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -77,15 +77,32 @@ const SignupScreen = () => {
       const result = await authService.register(userData);
       
       if (result.success) {
-        Alert.alert('Success', 'Account created successfully', [
-          { text: 'OK', onPress: () => navigation.navigate('Home') }
-        ]);
+        if (result.localOnly) {
+          // This is a local-only registration (for development)
+          Alert.alert(
+            'Local Registration',
+            'Created a local account. Server connection unavailable.',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
+        } else {
+          // This is a server-authenticated registration
+          Alert.alert(
+            'Success',
+            'Account created successfully',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
+        }
       } else {
-        Alert.alert('Error', result.message || 'Registration failed');
+        // Handle specific error codes
+        if (result.statusCode === 404) {
+          Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
+        } else {
+          Alert.alert('Error', result.message || 'Registration failed');
+        }
       }
     } catch (error) {
       console.error('Registration error:', error);
-      Alert.alert('Error', 'An error occurred during registration');
+      Alert.alert('Error', 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -206,36 +223,33 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingTop: 40,
+    paddingBottom: 50,
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginTop: 10,
   },
   backButton: {
-    marginRight: 15,
+    padding: 8,
   },
   backArrow: {
-    fontSize: 35,
-    fontWeight: 'bold',
+    fontSize: 28,
     color: '#000000',
-    textAlign: 'center',
-    lineHeight: 35,
+    fontWeight: 'bold',
   },
   title: {
-    fontSize: 27,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#000',
-    fontFamily: 'RobotoCondensed-Regular',
-    marginBottom: 30,
-    textAlign: 'center',
+    color: '#000000',
+    marginBottom: 20,
+    fontFamily: 'RobotoCondensed-Bold',
   },
   formBox: {
     backgroundColor: 'rgba(227, 227, 227, 0.9)',
     borderRadius: 10,
     padding: 20,
-    zIndex: 1,
   },
   input: {
     backgroundColor: '#FFFFFF',
@@ -249,7 +263,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#000000',
-    textAlign: 'center',
+    marginTop: 10,
     marginBottom: 20,
     fontFamily: 'RobotoCondensed-Bold',
   },

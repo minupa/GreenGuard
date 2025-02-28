@@ -1,8 +1,9 @@
 import { api } from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const AUTH_TOKEN_KEY = 'auth_token';
-const USER_DATA_KEY = 'user_data';
+export const AUTH_TOKEN_KEY = 'auth_token';
+export const USER_DATA_KEY = 'user_data';
 
 /**
  * Register a new user
@@ -11,18 +12,57 @@ const USER_DATA_KEY = 'user_data';
  */
 export const register = async (userData) => {
   try {
-    const response = await api.post('/auth/register', userData);
+    console.log('Attempting to register user with backend:', userData.phoneNumber);
     
-    if (response.data.success) {
-      // Store auth token
-      await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+    try {
+      // Try to register with backend first
+      const response = await api.post('/auth/register', userData);
       
-      // Store user data
-      await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+      if (response.data.success) {
+        // Store auth token
+        await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+        
+        // Store user data
+        await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+        
+        console.log('User registered successfully with backend');
+        return { success: true, user: response.data.user };
+      } else {
+        return { success: false, message: response.data.message || 'Registration failed' };
+      }
+    } catch (apiError) {
+      console.error('Backend registration failed:', apiError.message);
       
-      return { success: true, user: response.data.user };
-    } else {
-      return { success: false, message: response.data.message || 'Registration failed' };
+      // If in development mode, create a local user for testing
+      if (__DEV__) {
+        console.log('Development mode: Creating local user');
+        
+        // Generate a fake user ID for local testing
+        const localUser = {
+          ...userData,
+          id: Math.floor(Math.random() * 10000),
+          createdAt: new Date().toISOString()
+        };
+        
+        // Store fake token and user data
+        await AsyncStorage.setItem(AUTH_TOKEN_KEY, 'local-dev-token');
+        await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(localUser));
+        
+        console.log('Created local user for development:', localUser);
+        return { 
+          success: true, 
+          user: localUser, 
+          localOnly: true,
+          message: 'Created local user for development'
+        };
+      }
+      
+      // For production, return the error
+      return { 
+        success: false, 
+        message: apiError.response?.data?.message || 'Network error during registration',
+        statusCode: apiError.response?.status
+      };
     }
   } catch (error) {
     console.error('Registration error:', error);
@@ -41,18 +81,57 @@ export const register = async (userData) => {
  */
 export const login = async (phoneNumber, password) => {
   try {
-    const response = await api.post('/auth/login', { phoneNumber, password });
+    console.log('Attempting to login with backend:', phoneNumber);
     
-    if (response.data.success) {
-      // Store auth token
-      await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+    try {
+      // Try to login with backend first
+      const response = await api.post('/auth/login', { phoneNumber, password });
       
-      // Store user data
-      await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+      if (response.data.success) {
+        // Store auth token
+        await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+        
+        // Store user data
+        await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+        
+        console.log('User logged in successfully with backend');
+        return { success: true, user: response.data.user };
+      } else {
+        return { success: false, message: response.data.message || 'Login failed' };
+      }
+    } catch (apiError) {
+      console.error('Backend login failed:', apiError.message);
       
-      return { success: true, user: response.data.user };
-    } else {
-      return { success: false, message: response.data.message || 'Login failed' };
+      // If in development mode, try to login with local storage
+      if (__DEV__) {
+        console.log('Development mode: Trying local login');
+        
+        // Get stored users data (for development testing)
+        const storedUserData = await AsyncStorage.getItem(USER_DATA_KEY);
+        if (storedUserData) {
+          const userData = JSON.parse(storedUserData);
+          
+          // Simple local validation
+          if (userData.phoneNumber === phoneNumber) {
+            console.log('Local login successful for development');
+            await AsyncStorage.setItem(AUTH_TOKEN_KEY, 'local-dev-token');
+            
+            return { 
+              success: true, 
+              user: userData, 
+              localOnly: true,
+              message: 'Logged in with local storage (development mode)'
+            };
+          }
+        }
+      }
+      
+      // For production or if local login fails, return the error
+      return { 
+        success: false, 
+        message: apiError.response?.data?.message || 'Network error during login',
+        statusCode: apiError.response?.status
+      };
     }
   } catch (error) {
     console.error('Login error:', error);
@@ -69,14 +148,19 @@ export const login = async (phoneNumber, password) => {
  */
 export const getUserProfile = async () => {
   try {
+    console.log('Fetching user profile from API...');
     const response = await api.get('/auth/profile');
     
+    console.log('Profile API response:', JSON.stringify(response.data, null, 2));
+    
     if (response.data.success) {
-      // Update stored user data
+      // Update stored user data with latest from server
       await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+      console.log('Updated stored user data with fresh profile data');
       
       return { success: true, user: response.data.user };
     } else {
+      console.log('Profile fetch failed:', response.data.message);
       return { success: false, message: response.data.message || 'Failed to get profile' };
     }
   } catch (error) {
@@ -122,16 +206,86 @@ export const logout = async () => {
 };
 
 /**
- * Get the stored user data
- * @returns {Promise<Object|null>} - Promise with user data or null if not logged in
+ * Get stored user data
+ * @returns {Promise<Object|null>} - User data or null if not found
  */
 export const getStoredUserData = async () => {
   try {
     const userData = await AsyncStorage.getItem(USER_DATA_KEY);
     return userData ? JSON.parse(userData) : null;
   } catch (error) {
-    console.error('Error getting stored user data:', error);
+    console.error('Get stored user data error:', error);
     return null;
+  }
+};
+
+/**
+ * Update user profile
+ * @param {Object} userData - User profile data to update
+ * @returns {Promise} - Promise with update result
+ */
+export const updateProfile = async (userData) => {
+  try {
+    console.log('Updating profile with data:', userData);
+    
+    // Try to update with backend API
+    try {
+      const response = await api.put('/auth/profile', userData);
+      
+      console.log('Profile update response:', JSON.stringify(response.data, null, 2));
+      
+      if (response.data.success) {
+        // Update stored user data with updated profile
+        await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
+        console.log('Updated stored user data with updated profile');
+        
+        return { success: true, user: response.data.user };
+      }
+    } catch (apiError) {
+      console.log('API update failed, falling back to local storage:', apiError.message);
+      
+      // If backend API fails, update local storage only
+      // Get current stored user data
+      const storedUserData = await getStoredUserData();
+      
+      if (!storedUserData) {
+        return { 
+          success: false, 
+          message: 'Could not update profile: no stored user data found' 
+        };
+      }
+      
+      // Create updated user data object
+      const updatedUser = {
+        ...storedUserData,
+        fullName: userData.fullName,
+        age: userData.age,
+        address: userData.address,
+        selectedCrops: userData.selectedCrops
+      };
+      
+      // Store updated data in AsyncStorage
+      await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(updatedUser));
+      console.log('Updated local user data only');
+      
+      return { 
+        success: true, 
+        user: updatedUser, 
+        localOnly: true,
+        statusCode: apiError.response?.status
+      };
+    }
+    
+    return { 
+      success: false, 
+      message: 'Failed to update profile' 
+    };
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || 'Network error updating profile'
+    };
   }
 };
 
@@ -139,7 +293,9 @@ export default {
   register,
   login,
   getUserProfile,
+  getProfile: getUserProfile, // Alias for compatibility
   isLoggedIn,
   logout,
-  getStoredUserData
+  getStoredUserData,
+  updateProfile
 };

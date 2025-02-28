@@ -8,12 +8,14 @@ import {
   Dimensions,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DailyRatesScreen from './DailyRatesScreen';
+import authService from '../services/authService';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -36,9 +38,22 @@ const HomeScreen = () => {
     });
   };
 
-  const handleLogout = () => {
-    // Add logout logic here
-    navigation.navigate('Login');
+  const handleLogout = async () => {
+    try {
+      // Call the logout function from authService
+      const result = await authService.logout();
+      
+      if (result.success) {
+        Alert.alert('Success', 'You have been logged out successfully', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]);
+      } else {
+        Alert.alert('Error', 'Failed to logout. Please try again.');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      Alert.alert('Error', 'An unexpected error occurred during logout');
+    }
   };
 
   const FeatureIcon = ({ 
