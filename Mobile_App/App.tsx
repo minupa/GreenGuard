@@ -11,6 +11,7 @@ import HomeScreen from './Screens/HomeScreen';
 import DailyRatesScreen from './Screens/DailyRatesScreen';
 import UserProfileScreen from './Screens/UserProfileScreen';
 import EditProfileScreen from './Screens/EditProfileScreen';
+import WeatherScreen from './Screens/WeatherScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,6 +64,12 @@ const App = () => {
           component={EditProfileScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen 
+          name="Weather" 
+          component={WeatherScreen} 
+          options={{ headerShown: false }} 
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
