@@ -60,7 +60,7 @@ const WeatherApp = () => {
             onPress={fetchWeather} 
             disabled={loading || !city.trim()}
           >
-            <Text style={styles.buttonText}>{loading ? "Loading..." : "Get Weather"}</Text>
+          <Text style={styles.buttonText}>{loading ? "Loading..." : "Get Weather"}</Text>
           </TouchableOpacity>
           {error && <Text style={styles.error}>{error}</Text>}
 
@@ -69,16 +69,14 @@ const WeatherApp = () => {
               <Text style={styles.dataTitle}>{weatherData.city}</Text>
               <Text style={styles.bigTemperature}>{weatherData.current_temp}°C</Text>
               <View style={styles.tempRow}>
-                <Text style={styles.minMaxTemp}>Min 🔻 {weatherData.temp_min}°C</Text>
-                <Text style={styles.minMaxTemp}>Max 🔺 {weatherData.temp_max}°C</Text>
+                <Text style={styles.minMaxTemp}>Min🔻{weatherData.temp_min}°C</Text>
+                <Text style={styles.minMaxTemp}>Max🔺{weatherData.temp_max}°C</Text>
               </View>
               <Text style={styles.dataText}>🥶 Feels Like: {weatherData.feels_like}°C</Text>
-              <Text style={styles.dataText}>📉 Min Temp: {weatherData.temp_min}°C</Text>
-              <Text style={styles.dataText}>📈 Max Temp: {weatherData.temp_max}°C</Text>
               <Text style={styles.dataText}>🌦️ {weatherData.description}</Text>
               <Text style={styles.dataText}>💧 Humidity: {weatherData.humidity}%</Text>
               <Text style={styles.dataText}>💨 Wind Speed: {weatherData.WindGustSpeed} ms⁻¹</Text>
-              <Text style={styles.dataText}>🧭 {weatherData.wind_direction}</Text>
+              <Text style={styles.dataText}>🧭 {weatherData.wind_direction}°</Text>
               <Text style={styles.dataText}>🔽 Pressure: {weatherData.pressure} hPa</Text>
               <Text style={styles.dataText1}>Tomorrow Rain forecast</Text>
               <Text style={styles.dataText}>🌧️ Rain Probability: {weatherData.rain_probability}%</Text>
@@ -112,30 +110,30 @@ const WeatherApp = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "darkgreen" },
+  container: { flex: 1, backgroundColor: "white" },
   scrollContainer: { flexGrow: 1, paddingVertical: 20 },
   innerContainer: { alignItems: "center", padding: 20 },
-  title: { fontSize: 28, fontWeight: "bold", color: "white", marginBottom: 20 },
-  title1: { fontSize: 20, fontWeight: "bold", color: "white", marginBottom: 15 },
-  input: { width: "90%", padding: 12, borderRadius: 20, backgroundColor: "white", fontSize: 16, marginBottom: 12, color: "#333", textAlign: "center" },
-  button: { backgroundColor: "black", padding: 14, borderRadius: 20, width: "90%", alignItems: "center" },
-  buttonDisabled: { backgroundColor: "#74b9ff" },
-  buttonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+  title: { fontSize: 28, fontWeight: "bold", color: "black", marginBottom: 20 },
+  title1: { fontSize: 20, fontWeight: "bold", color: "black", marginBottom: 15 },
+  input: { width: "90%", padding: 12, borderRadius: 20, backgroundColor: "rgba(191, 252, 191, 0.9)", fontSize: 16, marginBottom: 12, color: "#333", textAlign: "center" },
+  button: { backgroundColor: "rgba(15, 192, 15, 0.74)", padding: 14, borderRadius: 20, width: "90%", alignItems: "center" },
+  buttonDisabled: { backgroundColor: "rgba(191, 252, 191, 0.35)" },
+  buttonText: { color: "black", fontSize: 18, fontWeight: "bold" },
   error: { color: "red", marginTop: 10, fontSize: 16 },
-  dataCard: { marginTop: 20, padding: 20, backgroundColor: "rgba(255, 255, 255, 0.2)", borderRadius: 20, width: "90%" },
-  dataTitle: { fontSize: 22, fontWeight: "bold", color: "#fff", textAlign: "center" },
-  bigTemperature: { fontSize: 50, fontWeight: "bold", color: "#fff", textAlign: "center" },
+  dataCard: { marginTop: 20, padding: 20, backgroundColor: "rgba(17, 213, 86, 0.28)", borderRadius: 20, width: "90%" },
+  dataTitle: { fontSize: 22, fontWeight: "bold", color: "black", textAlign: "center" },
+  bigTemperature: { fontSize: 50, fontWeight: "bold", color: "black", textAlign: "center" },
   tempRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", marginVertical: 10 },
-  minMaxTemp: { fontSize: 18, color: "#fff", marginHorizontal: 10 },
-  dataText: { fontSize: 18, color: "#fff", marginVertical: 4 },
-  dataText1: { fontSize: 18, color: "#fff", marginVertical: 10, textAlign: "center", fontWeight:"bold" },
-  forecastItem: { padding: 12, backgroundColor: "rgba(255, 255, 255, 0.3)", marginVertical: 10, borderRadius: 20 },
+  minMaxTemp: { fontSize: 18, color: "black", marginHorizontal: 10 },
+  dataText: { fontSize: 18, color: "black", marginVertical: 4 },
+  dataText1: { fontSize: 18, color: "black", marginVertical: 10, textAlign: "center", fontWeight:"bold" },
+  forecastItem: { padding: 12, backgroundColor: "rgba(255, 255, 255, 0.51)", marginVertical: 10, borderRadius: 20 },
   noForecast: { textAlign: "center", fontSize: 16, color: "#eee", marginTop: 10 },
-  forecastTitle: { fontSize: 20, fontWeight: "bold", color: "white", marginTop: 15, textAlign: "center" },
+  forecastTitle: { fontSize: 20, fontWeight: "bold", color: "black", marginTop: 15, textAlign: "center" },
   forecastBottomRow: { flexDirection: "row", justifyContent: "space-between", width: "100%", marginTop: 5 },
-  forecastLeftText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
-  forecastRightText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
-  forecastTime: { fontSize: 16, fontWeight: "bold", color: "#fff", textAlign:"center" },
+  forecastLeftText: { fontSize: 16, fontWeight: "bold", color: "black" },
+  forecastRightText: { fontSize: 16, fontWeight: "bold", color: "black" },
+  forecastTime: { fontSize: 16, fontWeight: "bold", color: "black", textAlign:"center" },
 
 });
 
