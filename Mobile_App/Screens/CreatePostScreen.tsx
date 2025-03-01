@@ -7,8 +7,8 @@ import {
   Image, 
   TextInput, 
   Alert,
-  Platform,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -33,7 +33,7 @@ const CreatePostScreen = () => {
         { 
           text: 'Take Photo', 
           onPress: () => launchCamera(options, (response) => {
-            if (!response.didCancel && response.assets?.[0]?.uri) {
+            if (response.assets?.[0]?.uri) {
               setImage(response.assets[0].uri);
             }
           })
@@ -41,7 +41,7 @@ const CreatePostScreen = () => {
         { 
           text: 'Choose from Gallery', 
           onPress: () => launchImageLibrary(options, (response) => {
-            if (!response.didCancel && response.assets?.[0]?.uri) {
+            if (response.assets?.[0]?.uri) {
               setImage(response.assets[0].uri);
             }
           })
