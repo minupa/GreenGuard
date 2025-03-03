@@ -26,6 +26,11 @@ const SignupScreen = () => {
   
   const [selectedCrops, setSelectedCrops] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    password: '',
+    confirmPassword: '',
+    phoneNumber: '',
+  });
 
   const crops = [
     'Black Pepper',
@@ -44,67 +49,79 @@ const SignupScreen = () => {
     );
   };
 
-  const handleSignup = async () => {
-    // Validation
-    if (Object.values(formData).some(value => !value)) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      password: '',
+      confirmPassword: '',
+      phoneNumber: '',
+    };
 
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
+      newErrors.confirmPassword = 'Passwords do not match';
+      isValid = false;
     }
 
-    if (selectedCrops.length === 0) {
-      Alert.alert('Error', 'Please select at least one crop');
-      return;
+    // Phone number validation
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Phone number must be exactly 10 digits';
+      isValid = false;
     }
 
-    setLoading(true);
+    setErrors(newErrors);
+    return isValid;
+  };
 
-    try {
-      // Call the register API with the format expected by the backend
-      const userData = {
-        fullName: formData.fullName,
-        age: parseInt(formData.age),
-        address: formData.address,
-        phoneNumber: formData.phoneNumber,
-        password: formData.password,
-        selectedCrops
-      };
-      
-      const result = await authService.register(userData);
-      
-      if (result.success) {
-        if (result.localOnly) {
-          // This is a local-only registration (for development)
-          Alert.alert(
-            'Local Registration',
-            'Created a local account. Server connection unavailable.',
-            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-          );
+  const handleSignup = async () => {
+    if (validateForm()) {
+      // Proceed with signup
+      setLoading(true);
+
+      try {
+        // Call the register API with the format expected by the backend
+        const userData = {
+          fullName: formData.fullName,
+          age: parseInt(formData.age),
+          address: formData.address,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+          selectedCrops
+        };
+        
+        const result = await authService.register(userData);
+        
+        if (result.success) {
+          if (result.localOnly) {
+            // This is a local-only registration (for development)
+            Alert.alert(
+              'Local Registration',
+              'Created a local account. Server connection unavailable.',
+              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+            );
+          } else {
+            // This is a server-authenticated registration
+            Alert.alert(
+              'Success',
+              'Account created successfully',
+              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+            );
+          }
         } else {
-          // This is a server-authenticated registration
-          Alert.alert(
-            'Success',
-            'Account created successfully',
-            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-          );
+          // Handle specific error codes
+          if (result.statusCode === 404) {
+            Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
+          } else {
+            Alert.alert('Error', result.message || 'Registration failed');
+          }
         }
-      } else {
-        // Handle specific error codes
-        if (result.statusCode === 404) {
-          Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
-        } else {
-          Alert.alert('Error', result.message || 'Registration failed');
-        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        Alert.alert('Error', 'An unexpected error occurred');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Registration error:', error);
-      Alert.alert('Error', 'An unexpected error occurred');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -152,17 +169,30 @@ const SignupScreen = () => {
             style={styles.input}
             placeholder="Phone Number"
             value={formData.phoneNumber}
-            onChangeText={(text) => setFormData(prev => ({...prev, phoneNumber: text}))}
-            keyboardType="phone-pad"
+            onChangeText={(text) => {
+              // Only allow numbers
+              const numericText = text.replace(/[^0-9]/g, '');
+              // Limit to 10 digits
+              if (numericText.length <= 10) {
+                setFormData({ ...formData, phoneNumber: numericText });
+              }
+            }}
+            keyboardType="numeric"
           />
+          {errors.phoneNumber ? (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          ) : null}
 
           <TextInput
             style={styles.input}
             placeholder="Password"
             value={formData.password}
-            onChangeText={(text) => setFormData(prev => ({...prev, password: text}))}
+            onChangeText={(text) => setFormData({ ...formData, password: text })}
             secureTextEntry
           />
+          {errors.password ? (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          ) : null}
 
           <TextInput
             style={styles.input}
@@ -171,6 +201,9 @@ const SignupScreen = () => {
             onChangeText={(text) => setFormData(prev => ({...prev, confirmPassword: text}))}
             secureTextEntry
           />
+          {errors.confirmPassword ? (
+            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+          ) : null}
 
           <Text style={styles.cropTitle}>Select Your Export Crops</Text>
           
@@ -309,6 +342,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000000',
     fontFamily: 'RobotoCondensed-Bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
+    marginBottom: 10,
   },
 });
 

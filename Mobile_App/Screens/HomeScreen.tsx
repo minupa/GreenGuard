@@ -161,7 +161,7 @@ const HomeScreen = () => {
         <View style={styles.sidebarContent}>
           <TouchableOpacity 
             style={styles.sidebarItem}
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('UserProfile')}
           >
             <Text style={styles.sidebarText}>Profile</Text>
           </TouchableOpacity>
