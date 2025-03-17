@@ -11,13 +11,10 @@ import {
 } from "react-native";
 import axios from "axios";
 import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
 
 const API_URL = "https://adithyakithmina-greenweather.hf.space";
 
 const WeatherApp = () => {
-  const navigation = useNavigation();
   const [city, setCity] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -48,12 +45,7 @@ const WeatherApp = () => {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => navigation.goBack()}
-          >
-            <Icon name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
+          <Text style={styles.title}>GreenGuard</Text>
           <Text style={styles.title1}>Weather Forecast</Text>
           <TextInput
             style={styles.input}
@@ -80,7 +72,6 @@ const WeatherApp = () => {
                 <Text style={styles.minMaxTemp}>Min🔻{weatherData.temp_min}°C</Text>
                 <Text style={styles.minMaxTemp}>Max🔺{weatherData.temp_max}°C</Text>
               </View>
-              
               <Text style={styles.dataText}>🥶 Feels Like: {weatherData.feels_like}°C</Text>
               <Text style={styles.dataText}>🌦️ {weatherData.description}</Text>
               <Text style={styles.dataText}>💧 Humidity: {weatherData.humidity}%</Text>
@@ -122,6 +113,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
   scrollContainer: { flexGrow: 1, paddingVertical: 20 },
   innerContainer: { alignItems: "center", padding: 20 },
+  title: { fontSize: 28, fontWeight: "bold", color: "black", marginBottom: 20 },
   title1: { fontSize: 20, fontWeight: "bold", color: "black", marginBottom: 15 },
   input: { width: "90%", padding: 12, borderRadius: 20, backgroundColor: "rgba(191, 252, 191, 0.9)", fontSize: 16, marginBottom: 12, color: "#333", textAlign: "center" },
   button: { backgroundColor: "rgba(15, 192, 15, 0.74)", padding: 14, borderRadius: 20, width: "90%", alignItems: "center" },
@@ -135,19 +127,14 @@ const styles = StyleSheet.create({
   minMaxTemp: { fontSize: 18, color: "black", marginHorizontal: 10 },
   dataText: { fontSize: 18, color: "black", marginVertical: 4 },
   dataText1: { fontSize: 18, color: "black", marginVertical: 10, textAlign: "center", fontWeight:"bold" },
-  forecastItem: { padding: 12, backgroundColor: "rgba(239, 243, 240, 0.31)", marginVertical: 10, borderRadius: 20 },
+  forecastItem: { padding: 12, backgroundColor: "rgba(255, 255, 255, 0.51)", marginVertical: 10, borderRadius: 20 },
   noForecast: { textAlign: "center", fontSize: 16, color: "#eee", marginTop: 10 },
   forecastTitle: { fontSize: 20, fontWeight: "bold", color: "black", marginTop: 15, textAlign: "center" },
   forecastBottomRow: { flexDirection: "row", justifyContent: "space-between", width: "100%", marginTop: 5 },
   forecastLeftText: { fontSize: 16, fontWeight: "bold", color: "black" },
   forecastRightText: { fontSize: 16, fontWeight: "bold", color: "black" },
   forecastTime: { fontSize: 16, fontWeight: "bold", color: "black", textAlign:"center" },
-  backButton: {
-    position: 'absolute',
-    top: 10,
-    left: 20,
-    padding: 5,
-  },
+
 });
 
 export default WeatherApp;
