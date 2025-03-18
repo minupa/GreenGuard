@@ -13,6 +13,7 @@ import axios from "axios";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
+import BackgroundPattern from '../components/BackgroundPattern';
 import { Image } from "react-native";
 
 
@@ -31,11 +32,13 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
     "Scattered clouds": "https://cdn-icons-png.flaticon.com/512/4834/4834559.png",
     "Broken clouds": "https://cdn-icons-png.flaticon.com/512/4834/4834559.png",
     "Shower rain": "https://cdn-icons-png.flaticon.com/512/4150/4150897.png",
-    "Light rain": "https://cdn-icons-png.flaticon.com/512/4150/4150897.png",
+    "Light rain": "https://icons.veryicon.com/png/o/weather/weather-7/rain-light.png",
     "Moderate rain": "https://cdn-icons-png.flaticon.com/512/4150/4150897.png",
     "Light rain and snow": "https://cdn-icons-png.flaticon.com/512/6221/6221304.png",
     "Rain": "https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
-    "Heavy ain": "https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
+    "Heavy rain": "https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
+    "Heavy intensity rain": "https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
+    "Very heavy rain": "https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
     "Thunderstorm": "https://cdn-icons-png.flaticon.com/512/3104/3104612.png",
     "Snow": "https://cdn-icons-png.flaticon.com/512/6221/6221304.png",
     "Light snow": "https://cdn-icons-png.flaticon.com/512/6221/6221304.png",
@@ -46,7 +49,14 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
     "Haze": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4gBhS3bH8YfBk1662tzIaMp6BATf9bQgrDEw24xyf4EkyrDr5fuIgm_RdPQmVn8AtGCY&usqp=CAU",
     "Smoke":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsmqfmyQciXH5lb68rWf8OPwZdbd-iWqlVNQ&s",
     "Windy":"https://www.clipartmax.com/png/middle/363-3638728_wind-icon-png-free-stock-blue-wind-icon.png",
+    "Drizzle":"https://cdn2.iconfinder.com/data/icons/weather-flat-14/64/weather05-512.png",
   };
+
+  const rainimages={
+    "Low possibility":"https://icons.veryicon.com/png/o/weather/weather-7/rain-light.png",
+    "Moderate possibility":"https://cdn-icons-png.flaticon.com/512/4150/4150897.png",
+    "High possibility":"https://cdn-icons-png.flaticon.com/512/6408/6408892.png",
+  }
 
   const fetchWeather = useCallback(async () => {
     if (!city.trim()) {
@@ -71,6 +81,7 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
+    <BackgroundPattern opacity={0.8} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
           <TouchableOpacity 
@@ -104,7 +115,7 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
 
               <View style={styles.descriptionItems}>
               <Image 
-                  source={{ uri: weatherImages[weatherData.description] || "https://example.com/default_weather.png" }} 
+                  source={{ uri: weatherImages[weatherData.description] || "https://images.vexels.com/media/users/3/240741/isolated/preview/ff782943c053c74207e8c3f0befca27e-weather-icons-silhouette.png" }} 
                   style={styles.weatherIcon} 
                 />
                 <Text style={styles.descriptionItems}>{weatherData.description}</Text>
@@ -116,8 +127,6 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
                 <Text style={styles.minMaxTemp}>Max🔺{weatherData.temp_max}°C</Text>
               </View>
               </View>
-
-
 
               <View style={styles.gridContainer}>
                 <View style={styles.box}>
@@ -141,9 +150,16 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
                   <Text style={styles.dataText}> {weatherData.pressure} hPa</Text>
                 </View>
               </View>
-              <Text style={styles.dataText1}>Rain forecast</Text>
-              <Text style={styles.dataText}> Rain Probability: {weatherData.rain_probability}%</Text>
-              <Text style={styles.dataText}> {weatherData.will_rain}</Text>
+              
+              <View style={styles.raincontainer}>
+              <Text style={styles.dataText1}>Precipitation </Text>
+              <Image 
+                  source={{ uri: rainimages[weatherData.will_rain] || "https://images.vexels.com/media/users/3/240741/isolated/preview/ff782943c053c74207e8c3f0befca27e-weather-icons-silhouette.png" }} 
+                  style={styles.weatherIcon} 
+                />
+              <Text style={styles.raintext1}> {weatherData.rain_probability}%</Text>
+              <Text style={styles.raintext}> {weatherData.will_rain}</Text>
+              </View>
 
               {weatherData.future_forecast?.times?.length ? (
                 <>
@@ -191,6 +207,9 @@ const styles = StyleSheet.create({
   dataText: { fontSize: 18, color: "black", marginVertical: 4 },
   dataText1: { fontSize: 18, color: "black", marginVertical: 10, textAlign: "center", fontWeight:"bold" },
   forecastItem: { padding: 12, backgroundColor: "rgba(255, 255, 255, 0.8)", marginVertical: 10, borderRadius: 20 },
+  raincontainer: { padding: 12, backgroundColor: "rgba(255, 255, 255, 0.8)", marginVertical: 10, borderRadius: 20,alignItems: "center", },
+  raintext: { fontSize: 15, fontWeight: "bold", color: "black", textAlign: "center" },
+  raintext1: { fontSize: 20, fontWeight: "bold", color: "black", textAlign: "center" },
   descriptionItems: { 
     backgroundColor: "white", 
     marginVertical: 10, 
