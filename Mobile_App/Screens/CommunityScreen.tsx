@@ -38,12 +38,13 @@ const CommunityScreen = () => {
   ]);
 
   // Handle new post addition
-  useEffect(() => {
-    if (route.params?.newPost) {
-      setPosts(prevPosts => [route.params.newPost, ...prevPosts]);
-      navigation.setParams({ newPost: null });
-    }
-  }, [route.params?.newPost]);
+useEffect(() => {
+  if (route.params?.newPost) {
+    setPosts(prevPosts => [{ ...route.params.newPost, comments: 0 }, ...prevPosts]); // Ensure new post has a comments field
+    navigation.setParams({ newPost: null }); // Reset param after update
+  }
+}, [route.params?.newPost]);
+
 
   const handleViewProfile = (userId: string) => {
     navigation.navigate('Profile', { userId, isEditable: false });
