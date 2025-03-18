@@ -319,7 +319,7 @@ const DashboardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   totalScansContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
+    backgroundColor: 'rgba(227, 227, 227, 0.78)',
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   userActivityContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
+    backgroundColor: 'rgba(227, 227, 227, 0.72)',
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
