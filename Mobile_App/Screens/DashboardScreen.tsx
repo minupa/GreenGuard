@@ -38,7 +38,7 @@ const DashboardScreen = ({ navigation }) => {
   const fetchScanData = async () => {
     try {
       setLoading(true);
-      const response = await authService.getScanData(); // Replace with your actual API call
+      const response = await authService.getScanData(); 
       if (response.success) {
         setTotalScans(response.totalScans);
         setRecentScans(response.recentScans || []);
@@ -60,7 +60,7 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchDiseaseTrends = async () => {
     try {
-      const response = await authService.getDiseaseTrends(); // Replace with your actual API call
+      const response = await authService.getDiseaseTrends();
       if (response.success) {
         setDiseaseTrends(response.diseaseTrends || []);
       } else {
@@ -74,7 +74,7 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchPestActivity = async () => {
     try {
-      const response = await authService.getPestActivity(); // Replace with your actual API call
+      const response = await authService.getPestActivity(); 
       if (response.success) {
         setPestActivity(response.pestActivity || []);
       } else {
@@ -88,7 +88,7 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchCommunityEngagement = async () => {
     try {
-      const response = await authService.getCommunityEngagement(); // Replace with your actual API call
+      const response = await authService.getCommunityEngagement(); 
       if (response.success) {
         setCommunityEngagement(response.communityEngagement || []);
       } else {
@@ -102,7 +102,7 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchExportReadiness = async () => {
     try {
-      const response = await authService.getExportReadiness(); // Replace with your actual API call
+      const response = await authService.getExportReadiness(); 
       if (response.success) {
         setExportReadiness(response.exportReadiness || []);
       } else {
