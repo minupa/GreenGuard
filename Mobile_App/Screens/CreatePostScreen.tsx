@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 
-//k
 const CreatePostScreen = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
