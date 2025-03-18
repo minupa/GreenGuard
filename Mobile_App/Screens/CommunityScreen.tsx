@@ -197,4 +197,3 @@ const styles = StyleSheet.create({
 });
 
 export default CommunityScreen;
-#latest
