@@ -13,7 +13,7 @@ import EditProfileScreen from './Screens/EditProfileScreen';
 import CommunityScreen from './Screens/CommunityScreen';
 import CommentsScreen from './Screens/CommentsScreen';
 import CreatePostScreen from './Screens/CreatePostScreen';
-import DashboardScreen from './Screens/DashboardScreen';
+
 import WeatherScreen from './Screens/WeatherScreen';
 
 
@@ -80,12 +80,6 @@ const App = () => {
         <Stack.Screen 
           name="Weather" 
           component={WeatherScreen} 
-          options={{ headerShown: false }} 
-        />
-
-        <Stack.Screen 
-          name="Dashboard" 
-          component={DashboardScreen} 
           options={{ headerShown: false }} 
         />
 

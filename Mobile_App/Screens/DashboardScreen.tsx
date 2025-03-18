@@ -21,12 +21,14 @@ const DashboardScreen = ({ navigation }) => {
     scansPerUser: 0,
     userEngagement: 0,
   });
+  const [diseaseTrends, setDiseaseTrends] = useState([]);
+  const [pestActivity, setPestActivity] = useState([]);
+  const [communityEngagement, setCommunityEngagement] = useState([]);
+  const [exportReadiness, setExportReadiness] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetchScanData();
   }, []);
-
   const fetchScanData = async () => {
     try {
       setLoading(true);
@@ -49,7 +51,96 @@ const DashboardScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+<<<<<<< Updated upstream
+  useEffect(() => {
+    fetchScanData();
+    fetchDiseaseTrends();
+    fetchPestActivity();
+    fetchCommunityEngagement();
+    fetchExportReadiness();
+  }, []);
 
+  const fetchScanData = async () => {
+    try {
+      setLoading(true);
+      const response = await authService.getScanData();
+      if (response.success) {
+        setTotalScans(response.totalScans);
+        setRecentScans(response.recentScans || []);
+        setUserActivity(response.userActivity || {
+          activeUsers: 0,
+          scansPerUser: 0,
+          userEngagement: 0,
+        });
+      } else {
+        Alert.alert('Error', response.message || 'Failed to fetch scan data');
+      }
+    } catch (error) {
+      console.error('Error fetching scan data:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDiseaseTrends = async () => {
+    try {
+      const response = await authService.getDiseaseTrends();
+      if (response.success) {
+        setDiseaseTrends(response.diseaseTrends || []);
+      } else {
+        Alert.alert('Error', response.message || 'Failed to fetch disease trends');
+      }
+    } catch (error) {
+      console.error('Error fetching disease trends:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const fetchPestActivity = async () => {
+    try {
+      const response = await authService.getPestActivity();
+      if (response.success) {
+        setPestActivity(response.pestActivity || []);
+      } else {
+        Alert.alert('Error', response.message || 'Failed to fetch pest activity');
+      }
+    } catch (error) {
+      console.error('Error fetching pest activity:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const fetchCommunityEngagement = async () => {
+    try {
+      const response = await authService.getCommunityEngagement();
+      if (response.success) {
+        setCommunityEngagement(response.communityEngagement || []);
+      } else {
+        Alert.alert('Error', response.message || 'Failed to fetch community engagement');
+      }
+    } catch (error) {
+      console.error('Error fetching community engagement:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const fetchExportReadiness = async () => {
+    try {
+      const response = await authService.getExportReadiness();
+      if (response.success) {
+        setExportReadiness(response.exportReadiness || []);
+      } else {
+        Alert.alert('Error', response.message || 'Failed to fetch export readiness');
+      }
+    } catch (error) {
+      console.error('Error fetching export readiness:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+=======
+  Navigation Handlers
+  // ===================================================
   const handleStartNewScan = () => {
     navigation.navigate('CropSelection'); // Navigate to the scan screen
   };
@@ -58,6 +149,8 @@ const DashboardScreen = ({ navigation }) => {
     navigation.navigate('Reports'); // Navigate to the reports screen
   };
 
+  // SECTION 6: Render Function for Recent Scans
+  // ===================================================
   const renderRecentScanItem = ({ item }) => (
     <View style={styles.recentScanItem}>
       <Text style={styles.recentScanText}>{item.date}</Text>
@@ -65,6 +158,8 @@ const DashboardScreen = ({ navigation }) => {
     </View>
   );
 
+  // SECTION 7: JSX Structure
+  // ===================================================
   return (
     <View style={styles.container}>
       <BackgroundPattern opacity={0.8} />
@@ -155,113 +250,4 @@ const DashboardScreen = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  totalScansContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  totalScansLabel: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 10,
-  },
-  totalScansValue: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  quickActionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  quickActionButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
-    padding: 15,
-    flex: 1,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  quickActionText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  userActivityContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 10,
-  },
-  userActivityItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  userActivityLabel: {
-    fontSize: 16,
-    color: '#333',
-  },
-  userActivityValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  recentScansContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
-    borderRadius: 10,
-    padding: 20,
-  },
-  recentScanItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  recentScanText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  noScansText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-});
-
-export default DashboardScreen;
+>>>>>>> Stashed changes
