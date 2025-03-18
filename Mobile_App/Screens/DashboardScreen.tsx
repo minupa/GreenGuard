@@ -51,6 +51,7 @@ const DashboardScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+<<<<<<< Updated upstream
   useEffect(() => {
     fetchScanData();
     fetchDiseaseTrends();
@@ -137,3 +138,116 @@ const DashboardScreen = ({ navigation }) => {
       Alert.alert('Error', 'An unexpected error occurred. Please try again.');
     }
   };
+=======
+  Navigation Handlers
+  // ===================================================
+  const handleStartNewScan = () => {
+    navigation.navigate('CropSelection'); // Navigate to the scan screen
+  };
+
+  const handleViewReports = () => {
+    navigation.navigate('Reports'); // Navigate to the reports screen
+  };
+
+  // SECTION 6: Render Function for Recent Scans
+  // ===================================================
+  const renderRecentScanItem = ({ item }) => (
+    <View style={styles.recentScanItem}>
+      <Text style={styles.recentScanText}>{item.date}</Text>
+      <Text style={styles.recentScanText}>{item.type}</Text>
+    </View>
+  );
+
+  // SECTION 7: JSX Structure
+  // ===================================================
+  return (
+    <View style={styles.container}>
+      <BackgroundPattern opacity={0.8} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Top Bar */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Icon name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Dashboard</Text>
+        </View>
+
+        {/* Total Scans */}
+        <View style={styles.totalScansContainer}>
+          <Text style={styles.totalScansLabel}>Total Scans</Text>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Text style={styles.totalScansValue}>{totalScans}</Text>
+          )}
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.quickActionsContainer}>
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={handleStartNewScan}
+          >
+            <Text style={styles.quickActionText}>Start New Scan</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={handleViewReports}
+          >
+            <Text style={styles.quickActionText}>View Reports</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* User Activity */}
+        <View style={styles.userActivityContainer}>
+          <Text style={styles.sectionTitle}>User Activity</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            <>
+              <View style={styles.userActivityItem}>
+                <Text style={styles.userActivityLabel}>Active Users</Text>
+                <Text style={styles.userActivityValue}>
+                  {userActivity.activeUsers}
+                </Text>
+              </View>
+              <View style={styles.userActivityItem}>
+                <Text style={styles.userActivityLabel}>Scans Per User</Text>
+                <Text style={styles.userActivityValue}>
+                  {userActivity.scansPerUser}
+                </Text>
+              </View>
+              <View style={styles.userActivityItem}>
+                <Text style={styles.userActivityLabel}>User Engagement</Text>
+                <Text style={styles.userActivityValue}>
+                  {userActivity.userEngagement}%
+                </Text>
+              </View>
+            </>
+          )}
+        </View>
+
+        {/* Recent Scans */}
+        <View style={styles.recentScansContainer}>
+          <Text style={styles.sectionTitle}>Recent Scans</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : recentScans.length > 0 ? (
+            <FlatList
+              data={recentScans}
+              renderItem={renderRecentScanItem}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          ) : (
+            <Text style={styles.noScansText}>No recent scans found.</Text>
+          )}
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+>>>>>>> Stashed changes
