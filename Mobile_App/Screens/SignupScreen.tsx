@@ -7,9 +7,11 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
+import * as authService from '../services/authService';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -24,6 +26,11 @@ const SignupScreen = () => {
   
   const [selectedCrops, setSelectedCrops] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    password: '',
+    confirmPassword: '',
+    phoneNumber: '',
+  });
 
   const crops = [
     'Black Pepper',
@@ -42,39 +49,80 @@ const SignupScreen = () => {
     );
   };
 
-  const handleSignup = () => {
-    // Validation
-    if (Object.values(formData).some(value => !value)) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      password: '',
+      confirmPassword: '',
+      phoneNumber: '',
+    };
 
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
+      newErrors.confirmPassword = 'Passwords do not match';
+      isValid = false;
     }
 
-    if (selectedCrops.length === 0) {
-      Alert.alert('Error', 'Please select at least one crop');
-      return;
+    // Phone number validation
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Phone number must be exactly 10 digits';
+      isValid = false;
     }
 
-    setLoading(true);
+    setErrors(newErrors);
+    return isValid;
+  };
 
-    // Simulate API delay
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert(
-        'Success',
-        'Account created successfully',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Login')
+  const handleSignup = async () => {
+    if (validateForm()) {
+      // Proceed with signup
+      setLoading(true);
+
+      try {
+        // Call the register API with the format expected by the backend
+        const userData = {
+          fullName: formData.fullName,
+          age: parseInt(formData.age),
+          address: formData.address,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+          selectedCrops
+        };
+        
+        const result = await authService.register(userData);
+        
+        if (result.success) {
+          if (result.localOnly) {
+            // This is a local-only registration (for development)
+            Alert.alert(
+              'Local Registration',
+              'Created a local account. Server connection unavailable.',
+              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+            );
+          } else {
+            // This is a server-authenticated registration
+            Alert.alert(
+              'Success',
+              'Account created successfully',
+              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+            );
           }
-        ]
-      );
-    }, 1000);
+        } else {
+          // Handle specific error codes
+          if (result.statusCode === 404) {
+            Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
+          } else {
+            Alert.alert('Error', result.message || 'Registration failed');
+          }
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        Alert.alert('Error', 'An unexpected error occurred');
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -121,17 +169,30 @@ const SignupScreen = () => {
             style={styles.input}
             placeholder="Phone Number"
             value={formData.phoneNumber}
-            onChangeText={(text) => setFormData(prev => ({...prev, phoneNumber: text}))}
-            keyboardType="phone-pad"
+            onChangeText={(text) => {
+              // Only allow numbers
+              const numericText = text.replace(/[^0-9]/g, '');
+              // Limit to 10 digits
+              if (numericText.length <= 10) {
+                setFormData({ ...formData, phoneNumber: numericText });
+              }
+            }}
+            keyboardType="numeric"
           />
+          {errors.phoneNumber ? (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          ) : null}
 
           <TextInput
             style={styles.input}
             placeholder="Password"
             value={formData.password}
-            onChangeText={(text) => setFormData(prev => ({...prev, password: text}))}
+            onChangeText={(text) => setFormData({ ...formData, password: text })}
             secureTextEntry
           />
+          {errors.password ? (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          ) : null}
 
           <TextInput
             style={styles.input}
@@ -140,6 +201,9 @@ const SignupScreen = () => {
             onChangeText={(text) => setFormData(prev => ({...prev, confirmPassword: text}))}
             secureTextEntry
           />
+          {errors.confirmPassword ? (
+            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+          ) : null}
 
           <Text style={styles.cropTitle}>Select Your Export Crops</Text>
           
@@ -173,9 +237,11 @@ const SignupScreen = () => {
             onPress={handleSignup}
             disabled={loading}
           >
-            <Text style={styles.signupButtonText}>
-              {loading ? 'Creating Account...' : 'Sign Up'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#000000" />
+            ) : (
+              <Text style={styles.signupButtonText}>Sign Up</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -190,36 +256,33 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingTop: 40,
+    paddingBottom: 50,
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginTop: 10,
   },
   backButton: {
-    marginRight: 15,
+    padding: 8,
   },
   backArrow: {
-    fontSize: 35,
-    fontWeight: 'bold',
+    fontSize: 28,
     color: '#000000',
-    textAlign: 'center',
-    lineHeight: 35,
+    fontWeight: 'bold',
   },
   title: {
-    fontSize: 27,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#000',
-    fontFamily: 'RobotoCondensed-Regular',
-    marginBottom: 30,
-    textAlign: 'center',
+    color: '#000000',
+    marginBottom: 20,
+    fontFamily: 'RobotoCondensed-Bold',
   },
   formBox: {
     backgroundColor: 'rgba(227, 227, 227, 0.9)',
     borderRadius: 10,
     padding: 20,
-    zIndex: 1,
   },
   input: {
     backgroundColor: '#FFFFFF',
@@ -233,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#000000',
-    textAlign: 'center',
+    marginTop: 10,
     marginBottom: 20,
     fontFamily: 'RobotoCondensed-Bold',
   },
@@ -280,6 +343,12 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontFamily: 'RobotoCondensed-Bold',
   },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
+    marginBottom: 10,
+  },
 });
 
-export default SignupScreen; 
+export default SignupScreen;

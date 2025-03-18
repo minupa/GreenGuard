@@ -6,39 +6,61 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundPattern from '../components/BackgroundPattern';
-
-// Mock user data for demonstration
-const MOCK_USER = {
-  phoneNumber: '1234567890',
-  password: 'password123'
-};
+import * as authService from '../services/authService';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!phoneNumber || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setError('Phone number and password are required');
       return;
     }
 
+    setError(''); // Clear any previous errors
     setLoading(true);
-    
-    // Simulate API delay
-    setTimeout(() => {
-      if (phoneNumber === MOCK_USER.phoneNumber && password === MOCK_USER.password) {
-        navigation.navigate('Home');
+
+    try {
+      const response = await authService.login(phoneNumber, password);
+      
+      if (response.success) {
+        // Handle successful login
+        navigation.replace('Home'); // or wherever your main app screen is
       } else {
-        Alert.alert('Error', 'Invalid credentials');
+        // Show specific error message from server
+        setError(response.message);
+        
+        // If no account exists, show sign up option
+        if (response.message.includes('Please sign up')) {
+          Alert.alert(
+            'Account Not Found',
+            'Would you like to create a new account?',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel'
+              },
+              {
+                text: 'Sign Up',
+                onPress: () => navigation.navigate('Signup')
+              }
+            ]
+          );
+        }
       }
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -46,6 +68,10 @@ const LoginScreen = () => {
       <BackgroundPattern opacity={0.8} />
       
       <Text style={styles.title}>Login</Text>
+      
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : null}
       
       <View style={styles.formBox}>
         <TextInput
@@ -69,9 +95,11 @@ const LoginScreen = () => {
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text style={styles.loginButtonText}>
-            {loading ? 'Loading...' : 'Login'}
-          </Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.loginButtonText}>Login</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -135,6 +163,12 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontFamily: 'RobotoCondensed-Regular',
   },
+  errorText: {
+    color: '#dc3545',
+    fontSize: 14,
+    marginBottom: 15,
+    textAlign: 'center',
+  }
 });
 
-export default LoginScreen; 
+export default LoginScreen;
