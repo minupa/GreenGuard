@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import BackgroundPattern from '../components/BackgroundPattern';
 import * as authService from '../services/authService';
 
 const SignupScreen = () => {
@@ -128,7 +127,7 @@ const SignupScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <BackgroundPattern opacity={0.8} />
+        {/* Remove BackgroundPattern component here */}
 
         <View style={styles.topBar}>
           <TouchableOpacity

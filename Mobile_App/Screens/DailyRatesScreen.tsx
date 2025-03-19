@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, RefreshControl, TouchableOpacity, ScrollView, I
 import axios from 'axios';
 import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 type CropRate = {
   id: string;
@@ -84,8 +83,6 @@ const DailyRatesScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <BackgroundPattern opacity={0.8} />
-
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity
@@ -150,7 +147,7 @@ const DailyRatesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F6F8',  // Light gray background for better contrast
   },
   mainContainer: {
     flex: 1,
@@ -184,11 +181,15 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   title: {
-    fontSize: 27,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#000',
-    fontFamily: 'RobotoCondensed-Regular',
+    color: '#2C5530', // Dark green color
+    fontFamily: 'RobotoCondensed-Bold',
     textAlign: 'center',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   listContainer: {
     paddingBottom: 20,
@@ -201,14 +202,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   rateItem: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
+    backgroundColor: '#e8f5e9', // Light green color
     borderRadius: 10,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    zIndex: 1,
   },
   cropName: {
     fontSize: 16,

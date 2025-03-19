@@ -15,7 +15,6 @@ import axios from "axios";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { Video } from "react-native-video";
 import { useNavigation } from "@react-navigation/native";
-import BackgroundPattern from '../components/BackgroundPattern';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 
@@ -230,14 +229,9 @@ const DetectionScreen = ({ route }: any) => {
     );
   };
 
-  // Rest of your component remains the same...
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <BackgroundPattern 
-          numberOfElements={25}
-          opacity={0.4}
-        />
         
         <View style={styles.topBar}>
           <TouchableOpacity

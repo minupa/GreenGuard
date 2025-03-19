@@ -13,7 +13,6 @@ import axios from "axios";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
-import BackgroundPattern from '../components/BackgroundPattern';
 import { Image } from "react-native";
 
 
@@ -81,7 +80,6 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-    <BackgroundPattern opacity={0.8} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
           <TouchableOpacity 
@@ -189,7 +187,9 @@ const API_URL = "https://adithyakithmina-greenweather.hf.space";
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
+  container: { 
+    flex: 1
+  },
   scrollContainer: { flexGrow: 1, paddingVertical: 20 },
   innerContainer: { alignItems: "center", padding: 20 },
   title1: { fontSize: 20, fontWeight: "bold", color: "black", marginBottom: 15 },

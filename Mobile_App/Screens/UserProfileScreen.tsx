@@ -3,8 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
   ActivityIndicator,
   Image,
   Alert
@@ -14,7 +16,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as authService from '../services/authService';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
@@ -125,73 +126,80 @@ const UserProfileScreen = () => {
   console.log("Display data for profile:", userDisplayData);
 
   return (
-    <LinearGradient
-      colors={['#22c55e', '#16a34a']}
-      style={styles.gradient}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
     >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="#ffffff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>User Profile</Text>
-      </View>
-
-      <ScrollView style={styles.container}>
-        <View style={styles.profileContainer}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.profileHeader}>
-              <View style={styles.avatarContainer}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>
-                    {userDisplayData.fullName.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.userName}>{userDisplayData.fullName}</Text>
-              <Text style={styles.userPhone}>{userDisplayData.phoneNumber}</Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoSection}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
-              <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Age:</Text>
-                <Text style={styles.infoValue}>{userDisplayData.age}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Address:</Text>
-                <Text style={styles.infoValue}>{userDisplayData.address}</Text>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoSection}>
-              <Text style={styles.sectionTitle}>Selected Crops</Text>
-              {userDisplayData.selectedCrops.map((crop, index) => (
-                <View key={index} style={styles.cropItem}>
-                  <MaterialCommunityIcons
-                    name="leaf"
-                    size={16}
-                    color="#22c55e"
-                    style={styles.cropIcon}
-                  />
-                  <Text style={styles.cropText}>{crop}</Text>
-                </View>
-              ))}
-            </View>
-            
-            <TouchableOpacity 
-              style={styles.editButton}
-              onPress={handleEditProfile}
-            >
-              <Text style={styles.editButtonText}>Edit Profile</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <LinearGradient
+          colors={['#22c55e', '#16a34a']}
+          style={styles.gradient}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity onPress={goBack} style={styles.backButton}>
+              <Icon name="arrow-back" size={24} color="#ffffff" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>User Profile</Text>
           </View>
-        </View>
+
+          <ScrollView style={styles.container}>
+            <View style={styles.profileContainer}>
+              <View style={styles.userInfoContainer}>
+                <View style={styles.profileHeader}>
+                  <View style={styles.avatarContainer}>
+                    <View style={styles.avatar}>
+                      <Text style={styles.avatarText}>
+                        {userDisplayData.fullName.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.userName}>{userDisplayData.fullName}</Text>
+                  <Text style={styles.userPhone}>{userDisplayData.phoneNumber}</Text>
+                </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.infoSection}>
+                  <Text style={styles.sectionTitle}>Personal Information</Text>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoLabel}>Age:</Text>
+                    <Text style={styles.infoValue}>{userDisplayData.age}</Text>
+                  </View>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoLabel}>Address:</Text>
+                    <Text style={styles.infoValue}>{userDisplayData.address}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.infoSection}>
+                  <Text style={styles.sectionTitle}>Selected Crops</Text>
+                  {userDisplayData.selectedCrops.map((crop, index) => (
+                    <View key={index} style={styles.cropItem}>
+                      <MaterialCommunityIcons
+                        name="leaf"
+                        size={16}
+                        color="#22c55e"
+                        style={styles.cropIcon}
+                      />
+                      <Text style={styles.cropText}>{crop}</Text>
+                    </View>
+                  ))}
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.editButton}
+                  onPress={handleEditProfile}
+                >
+                  <Text style={styles.editButtonText}>Edit Profile</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </LinearGradient>
       </ScrollView>
-    </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -202,6 +210,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   header: {
     flexDirection: 'row',

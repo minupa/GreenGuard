@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import BackgroundPattern from '../components/BackgroundPattern';
 import * as authService from '../services/authService';
 
 const LoginScreen = () => {
@@ -65,7 +64,6 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackgroundPattern opacity={0.8} />
       
       <Text style={styles.title}>Login</Text>
       

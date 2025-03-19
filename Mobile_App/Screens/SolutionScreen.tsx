@@ -7,7 +7,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 type RouteParams = {
   diseaseName: string;
@@ -22,10 +21,6 @@ const SolutionScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <BackgroundPattern 
-          numberOfElements={25}
-          opacity={0.8}
-        />
 
         {/* Top Bar with Back Button */}
         <View style={styles.topBar}>

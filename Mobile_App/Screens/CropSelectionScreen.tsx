@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 type RootStackParamList = {
   CropSelection: undefined;
@@ -31,7 +30,7 @@ const CropSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackgroundPattern opacity={0.8} />
+      {/* Remove BackgroundPattern component here */}
 
       {/* Top Bar with Back Button */}
       <View style={styles.topBar}>
@@ -200,16 +199,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
   },
-  backgroundPattern: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
-  },
-  treeIcon: {
-    position: 'absolute',
-    fontSize: 24,
-  },
+  // Remove these background-related styles
+  backgroundPattern: null,
+  treeIcon: null,
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
