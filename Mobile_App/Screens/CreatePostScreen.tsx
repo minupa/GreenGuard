@@ -52,30 +52,30 @@ const CreatePostScreen = () => {
     );
   };
 
-  const handlePost = () => {
-    if (!userName.trim()) {
-      Alert.alert('Error', 'Please enter your name');
-      return;
-    }
+const handlePost = () => {
+  if (!userName.trim()) {
+    Alert.alert('Error', 'Please enter your name');
+    return;
+  }
+  if (!image) {
+    Alert.alert('Error', 'Please select a photo');
+    return;
+  }
 
-    if (!image) {
-      Alert.alert('Error', 'Please select a photo');
-      return;
-    }
-
-    const newPost = {
-      id: Date.now().toString(),
-      userId: 'currentUser',
-      user: userName,
-      content: caption,
-      image,
-      likes: 0,
-      comments: [],
-      avatar: 'https://picsum.photos/200',
-    };
-
-    navigation.navigate('Community', { newPost });
+  const newPost = {
+    id: Date.now().toString(),
+    userId: 'currentUser',
+    user: userName,
+    content: caption,
+    image,
+    likes: 0,
+    comments: 0, // Make sure this matches CommunityScreen.tsx
+    avatar: 'https://picsum.photos/200',
   };
+
+  navigation.navigate('Community', { newPost });
+};
+
 
   return (
     <KeyboardAvoidingView
