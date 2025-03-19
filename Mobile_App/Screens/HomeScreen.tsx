@@ -14,7 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as authService from '../services/authService';
 
 const HomeScreen = () => {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('Home'); // Changed from 'home' to 'Home'
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
 
@@ -79,7 +79,7 @@ const HomeScreen = () => {
     >
       <Icon 
         name={icon} 
-        size={24} 
+        size={20} // Reduced from 24
         color={isActive ? '#2ecc71' : '#666'} 
       />
       <Text style={[
@@ -153,13 +153,13 @@ const HomeScreen = () => {
           name="Home"
           icon="home"
           onPress={() => navigation.navigate('Home')}
-          isActive={activeTab === 'home'}
+          isActive={activeTab === 'Home'}  // Changed from 'home' to 'Home'
         />
         <NavItem
           name="Profile"
           icon="person"
           onPress={() => navigation.navigate('UserProfile')}
-          isActive={activeTab === 'profile'}
+          isActive={activeTab === 'Profile'}
         />
         <NavItem
           name="Settings"
@@ -255,8 +255,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 8, // Reduced from 12
+    paddingHorizontal: 16, // Reduced from 20
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
     shadowColor: '#000',
@@ -270,14 +270,14 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: 'center',
-    minWidth: 60,
+    minWidth: 50, // Reduced from 60
   },
   navItemActive: {
     transform: [{scale: 1.1}],
   },
   navLabel: {
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 11, // Reduced from 12
+    marginTop: 2, // Reduced from 4
     color: '#666',
     fontFamily: 'RobotoCondensed-Regular',
   },
