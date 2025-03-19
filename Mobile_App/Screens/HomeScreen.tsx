@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,26 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as authService from '../services/authService';
 
 const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState('home');
   const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await authService.getUserProfile();
+        if (response.success) {
+          setUserData(response.user);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -75,6 +91,25 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Green Header Section */}
+      <LinearGradient
+        colors={['#2ecc71', '#27ae60']}
+        style={styles.headerSection}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.greetingBox}>
+            <Text style={styles.greeting}>
+              Hi, {userData?.fullName?.split(' ')[0] || 'User'}
+            </Text>
+          </View>
+          <Image 
+            source={require('../assets/logo-light.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+        </View>
+      </LinearGradient>
+
       <ScrollView contentContainerStyle={styles.content}>
         {/* Feature Icons */}
         <View style={styles.featureIconRow}>
@@ -151,6 +186,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     padding: 20,
+    paddingTop: 10, // Reduced top padding since we have the header
   },
   featureIconRow: {
     flexDirection: 'row',
@@ -256,6 +292,48 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
     backgroundColor: '#fff',
+  },
+  headerSection: {
+    width: '100%',
+    height: 100, // Fixed height for consistent vertical centering
+    paddingHorizontal: 20,
+    elevation: 15, // Increased elevation for Android
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8, // Increased offset
+    },
+    shadowOpacity: 0.4, // Increased opacity
+    shadowRadius: 10, // Increased radius
+    zIndex: 10,
+    justifyContent: 'center', // Ensures vertical centering
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',  // Add this
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
+    tintColor: '#FFFFFF',
+    position: 'absolute',  // Add this
+    right: 0,            // Add this
+    top: '50%',          // Add this
+    transform: [{translateY: -30}], // Add this to center vertically
+  },
+  greetingBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  greeting: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontFamily: 'RobotoCondensed-Regular',
   },
 });
 
