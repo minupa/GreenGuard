@@ -113,23 +113,38 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Feature Icons */}
         <View style={styles.featureIconRow}>
-          <FeatureIcon 
-            iconName="local-hospital" 
-            label="Disease Detection" 
-            onPress={() => navigation.navigate('CropSelection')} 
-          />
-          <FeatureIcon 
-            iconName="group" 
-            label="Community" 
-            onPress={() => navigation.navigate('Community')} 
-            iconType="MaterialIcons"
-          />
-          <FeatureIcon 
-            iconName="view-dashboard" 
-            label="Dashboard" 
-            onPress={() => navigation.navigate('Dashboard')} 
-            iconType="MaterialCommunityIcons"
-          />
+          <TouchableOpacity 
+            style={styles.featureButton}
+            onPress={() => navigation.navigate('CropSelection')}
+          >
+            <Image 
+              source={require('../assets/detection.png')} 
+              style={styles.featureImage}
+            />
+            <Text style={styles.featureLabel}>Disease </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.featureButton}
+            onPress={() => navigation.navigate('Community')}
+          >
+            <Image 
+              source={require('../assets/social-media-management.png')} 
+              style={styles.featureImage}
+            />
+            <Text style={styles.featureLabel}>Community</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.featureButton}
+            onPress={() => navigation.navigate('Dashboard')}
+          >
+            <Image 
+              source={require('../assets/dashboard.png')} 
+              style={styles.featureImage}
+            />
+            <Text style={styles.featureLabel}>Dashboard</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Image Buttons */}
@@ -191,7 +206,31 @@ const styles = StyleSheet.create({
   featureIconRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
+  featureButton: {
+    alignItems: 'center',
+    width: '30%',
+    height: 70,
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    padding: 8,
+    borderRadius: 12,
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  featureImage: {
+    width: 35, // Smaller image
+    height: 35,
+    borderRadius: 8,
+    marginBottom: 4, // Reduced margin
+  },
+  featureLabel: {
+    fontSize: 11, // Smaller font
+    fontWeight: '600',
+    color: '#2C3E50',
+    textAlign: 'center',
   },
   featureIconContainer: {
     alignItems: 'center',

@@ -7,6 +7,7 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as authService from '../services/authService';
@@ -64,6 +65,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Image 
+        source={require('../assets/logo-light.png')}
+        style={styles.logo}
+      />
+      <Text style={styles.brandName}>GreenGuard</Text>
       
       <Text style={styles.title}>Login</Text>
       
@@ -104,7 +110,8 @@ const LoginScreen = () => {
           onPress={() => navigation.navigate('Signup')}
         >
           <Text style={styles.signupText}>
-            Don't have an account? Sign up
+            Don't have an account?{' '}
+            <Text style={styles.signupLink}>Sign up</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -117,14 +124,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 80, // Add padding to move content up
+    justifyContent: 'flex-start', // Change from 'center' to 'flex-start'
+  },
+  logo: {
+    width: 150, // Increased from 120
+    height: 150, // Increased from 120
+    resizeMode: 'contain',
+    marginBottom: -25, // Increased negative margin to pull text up more
+  },
+  brandName: {
+    fontSize: 20, // Reduced from 24
+    fontWeight: 'bold',
+    color: '#006400',
+    fontFamily: 'RobotoCondensed-Bold',
+    marginBottom: 10,
+    marginTop: -5, // Added negative margin to pull up even more
   },
   title: {
     fontSize: 27,
     fontWeight: '800',
     color: '#000',
     fontFamily: 'RobotoCondensed-Regular',
-    marginBottom: 30,
+    marginBottom: 15, // Reduced from 30
     zIndex: 1,
   },
   formBox: {
@@ -160,6 +182,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#000000',
     fontFamily: 'RobotoCondensed-Regular',
+  },
+  signupLink: {
+    color: '#006400',
+    fontWeight: 'bold',
   },
   errorText: {
     color: '#dc3545',
