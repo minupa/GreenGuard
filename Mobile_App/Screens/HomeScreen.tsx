@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,6 +31,13 @@ const HomeScreen = () => {
     };
     fetchUserData();
   }, []);
+
+  // Add this effect to reset active tab when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      setActiveTab('Home');
+    }, [])
+  );
 
   const handleLogout = async () => {
     try {
@@ -75,6 +82,8 @@ const HomeScreen = () => {
       onPress={() => {
         if (name === 'Settings') {
           navigation.navigate('Settings');
+        } else if (name === 'Profile') {
+          navigation.navigate('UserProfile');
         } else {
           setActiveTab(name);
           onPress();
@@ -89,7 +98,6 @@ const HomeScreen = () => {
       <Text style={[
         styles.navLabel,
         isActive && styles.navLabelActive,
-        { color: '#666' }
       ]}>{name}</Text>
     </TouchableOpacity>
   );
@@ -176,13 +184,13 @@ const HomeScreen = () => {
         <NavItem
           name="Home"
           icon="home"
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => {}}
           isActive={activeTab === 'Home'}  // Changed from 'home' to 'Home'
         />
         <NavItem
           name="Profile"
           icon="person"
-          onPress={() => navigation.navigate('UserProfile')}
+          onPress={() => {}}
           isActive={activeTab === 'Profile'}
         />
         <NavItem
@@ -195,7 +203,7 @@ const HomeScreen = () => {
           name="Logout"
           icon="logout"
           onPress={handleLogout}
-          isActive={activeTab === 'logout'}
+          isActive={activeTab === 'Logout'}
         />
       </View>
     </View>
