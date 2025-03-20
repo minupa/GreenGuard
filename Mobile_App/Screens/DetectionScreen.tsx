@@ -413,6 +413,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     alignItems: "center",
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6, // for Android shadow
   },
   selectButtonText: {
     fontSize: 16,
@@ -427,6 +436,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     zIndex: 1,
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // for Android shadow
   },
   resultText: {
     fontSize: 16,
@@ -467,6 +485,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // for Android shadow
   },
   clearButtonText: {
     fontSize: 16,

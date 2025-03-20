@@ -189,6 +189,9 @@ const CropSelectionScreen = () => {
       <TouchableOpacity style={styles.selectButton} onPress={handleSelectButton}>
         <Text style={styles.selectButtonText}>Select</Text>
       </TouchableOpacity>
+
+      {/* Add half circle design */}
+      <View style={styles.halfCircle} />
     </View>
   );
 };
@@ -296,12 +299,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     zIndex: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   selectButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#000000",
     fontFamily: "RobotoCondensed-Bold",
+  },
+  halfCircle: {
+    position: 'absolute',
+    bottom: -100,
+    width: 400,
+    height: 200,
+    borderTopLeftRadius: 200,
+    borderTopRightRadius: 200,
+    backgroundColor: 'rgba(76, 175, 80, 0.6)', // Darker green with more opacity
+    transform: [{ scaleX: 1.5 }],
   },
 });
 

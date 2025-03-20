@@ -75,11 +75,9 @@ const SignupScreen = () => {
 
   const handleSignup = async () => {
     if (validateForm()) {
-      // Proceed with signup
       setLoading(true);
 
       try {
-        // Call the register API with the format expected by the backend
         const userData = {
           fullName: formData.fullName,
           age: parseInt(formData.age),
@@ -93,24 +91,36 @@ const SignupScreen = () => {
         
         if (result.success) {
           if (result.localOnly) {
-            // This is a local-only registration (for development)
+            // Show warning about offline mode instead of automatically creating local account
             Alert.alert(
-              'Local Registration',
-              'Created a local account. Server connection unavailable.',
-              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+              'Connection Error',
+              'Cannot connect to server. Please check your internet connection and try again.',
+              [{ text: 'OK' }]
             );
-          } else {
-            // This is a server-authenticated registration
-            Alert.alert(
-              'Success',
-              'Account created successfully',
-              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-            );
+            return;
           }
+          
+          Alert.alert(
+            'Success',
+            'Account created successfully',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
         } else {
-          // Handle specific error codes
-          if (result.statusCode === 404) {
-            Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
+          // Handle specific error cases
+          if (result.statusCode === 409) {
+            Alert.alert(
+              'Registration Failed',
+              'An account with this phone number already exists. Please login instead.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { 
+                  text: 'Go to Login', 
+                  onPress: () => navigation.navigate('Login')
+                }
+              ]
+            );
+          } else if (result.statusCode === 404) {
+            Alert.alert('Server Error', 'The registration service is unavailable. Please try again later.');
           } else {
             Alert.alert('Error', result.message || 'Registration failed');
           }
