@@ -73,24 +73,31 @@ const HomeScreen = () => {
     <TouchableOpacity 
       style={[styles.navItem, isActive && styles.navItemActive]}
       onPress={() => {
-        setActiveTab(name);
-        onPress();
+        if (name === 'Settings') {
+          navigation.navigate('Settings');
+        } else {
+          setActiveTab(name);
+          onPress();
+        }
       }}
     >
       <Icon 
         name={icon} 
-        size={20} // Reduced from 24
+        size={20}
         color={isActive ? '#2ecc71' : '#666'} 
       />
       <Text style={[
         styles.navLabel,
-        isActive && styles.navLabelActive
+        isActive && styles.navLabelActive,
+        { color: '#666' }
       ]}>{name}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[
+      styles.container
+    ]}>
       {/* Green Header Section */}
       <LinearGradient
         colors={['#2ecc71', '#27ae60']}
@@ -163,7 +170,9 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Bottom Navigation Bar */}
-      <View style={styles.bottomNav}>
+      <View style={[
+        styles.bottomNav
+      ]}>
         <NavItem
           name="Home"
           icon="home"
@@ -180,7 +189,7 @@ const HomeScreen = () => {
           name="Settings"
           icon="settings"
           onPress={() => {}}
-          isActive={activeTab === 'settings'}
+          isActive={activeTab === 'Settings'}
         />
         <NavItem
           name="Logout"
