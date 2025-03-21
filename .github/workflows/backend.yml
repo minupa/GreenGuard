@@ -11,10 +11,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: List directory contents
-        run: ls -la
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+
+      - name: Checkout backend repo
+        uses: actions/checkout@v3
+        with:
+          repository: your-username/gg-backend
+          path: gg-backend
+          token: ${{ secrets.GH_PAT }}
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -23,9 +28,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          cd Backend/GG_app_backend || cd backend/gg_app_backend
-          pwd
-          ls -la
+          cd gg-backend
           npm install
           
       - name: Deploy to Vercel
@@ -33,4 +36,4 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./Backend/GG_app_backend
+          working-directory: ./gg-backend
