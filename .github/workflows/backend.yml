@@ -17,7 +17,7 @@ jobs:
       - name: Checkout backend repo
         uses: actions/checkout@v3
         with:
-          repository: poornamadhusith/gg-backend
+          repository: poornamadhusith/GG_app_backend
           token: ${{ secrets.GH_PAT }}
           path: gg-backend
           ssh-strict: true
