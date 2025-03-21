@@ -1,0 +1,25 @@
+name: Mobile App CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Mobile_App/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: |
+          cd Mobile_App
+          npm install
+      - name: Run tests
+        run: |
+          cd Mobile_App
+          npm test
