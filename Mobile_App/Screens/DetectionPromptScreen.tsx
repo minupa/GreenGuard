@@ -34,7 +34,7 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// Keep the same styles as before
+// Keep the same styles as before  uuuuu
 const styles = StyleSheet.create({
   container: {
     flex: 1,
