@@ -1,0 +1,40 @@
+name: Disease Solutions CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'disease-solutions/**'
+  pull_request:
+    paths:
+      - 'disease-solutions/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      working-directory: disease-solutions
+      run: npm ci
+
+    - name: Run Tests
+      working-directory: disease-solutions
+      run: npm test
+
+    - name: Deploy to Heroku
+      working-directory: disease-solutions
+      run: |
+        git remote add heroku https://heroku:${{ secrets.HRKU-57679b12-7115-4971-89a3-8550f90031e6 }}@git.heroku.com/${{ secrets.greenguard-solutions-api }}.git
+        git push heroku main
+      env:
+        HEROKU_API_KEY: ${{ HRKU-57679b12-7115-4971-89a3-8550f90031e6}}

@@ -1,0 +1,58 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Backend/**'
+  pull_request:
+    paths:
+      - 'Backend/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Backend Dependencies
+      working-directory: Backend/GG_app_backend
+      run: npm ci
+
+    - name: Run Backend Tests
+      working-directory: Backend/GG_app_backend
+      run: |
+        npm test test-vercel-deployment.js
+        npm test test-auth-endpoints.js
+        npm test test-rds-connection.js
+
+    - name: Verify Deployment Configuration
+      working-directory: Backend/GG_app_backend
+      run: node deploy-vercel.js
+
+  deploy-production:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to Vercel
+      working-directory: Backend/GG_app_backend
+      run: |
+        npm install -g vercel
+        vercel --prod --confirm
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
