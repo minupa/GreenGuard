@@ -19,7 +19,7 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
       
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Detection')}
+        onPress={() => navigation.navigate('CropSelection')}
       >
         <Text style={styles.buttonText}>Disease Detection</Text>
       </TouchableOpacity>
