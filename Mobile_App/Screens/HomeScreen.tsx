@@ -130,13 +130,13 @@ const HomeScreen = () => {
         <View style={styles.featureIconRow}>
           <TouchableOpacity 
             style={styles.featureButton}
-            onPress={() => navigation.navigate('CropSelection')}
+            onPress={() => navigation.navigate('DetectionPrompt')}
           >
             <Image 
               source={require('../assets/detection.png')} 
               style={styles.featureImage}
             />
-            <Text style={styles.featureLabel}>Disease </Text>
+            <Text style={styles.featureLabel}>Detection</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
