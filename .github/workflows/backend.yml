@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: List directory contents
+        run: ls -la
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -20,7 +23,9 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          cd Backend/GG_app_backend
+          cd Backend/GG_app_backend || cd backend/gg_app_backend
+          pwd
+          ls -la
           npm install
           
       - name: Deploy to Vercel
