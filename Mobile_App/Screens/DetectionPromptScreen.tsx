@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app';
 
@@ -13,8 +13,25 @@ type Props = {
 };
 
 const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      navigation.navigate('Home');
+      return true;
+    });
+
+    return () => backHandler.remove();
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Text style={styles.backArrow}>←</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.title}>Select Detection Type</Text>
       
       <TouchableOpacity
@@ -37,6 +54,7 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
 // Keep the same styles as before  uuuuu
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFFFFF',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -57,6 +75,29 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 40,
+    width: '100%',
+    paddingHorizontal: 20,
+    zIndex: 1,
+  },
+  backButton: {
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backArrow: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    lineHeight: 35,
+    includeFontPadding: false,
+    padding: 0,
+    margin: 0,
   },
 });
 
