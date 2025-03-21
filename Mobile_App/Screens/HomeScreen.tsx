@@ -124,22 +124,21 @@ const HomeScreen = () => {
           />
         </View>
       </LinearGradient>
-        
-        
+
       <ScrollView contentContainerStyle={styles.content}>
         {/* Feature Icons */}
         <View style={styles.featureIconRow}>
           <TouchableOpacity 
             style={styles.featureButton}
-            onPress={() => navigation.navigate('CropSelection')}
+            onPress={() => navigation.navigate('DetectionPrompt')}
           >
             <Image 
               source={require('../assets/detection.png')} 
               style={styles.featureImage}
             />
-            <Text style={styles.featureLabel}>Disease </Text>
+            <Text style={styles.featureLabel}>Detection</Text>
           </TouchableOpacity>
-         
+
           <TouchableOpacity 
             style={styles.featureButton}
             onPress={() => navigation.navigate('Community')}
@@ -186,7 +185,7 @@ const HomeScreen = () => {
           name="Home"
           icon="home"
           onPress={() => {}}
-          isActive={activeTab === 'Home'}  //change Changed from 'home' to 'Home'
+          isActive={activeTab === 'Home'}  // Changed from 'home' to 'Home'
         />
         <NavItem
           name="Profile"
