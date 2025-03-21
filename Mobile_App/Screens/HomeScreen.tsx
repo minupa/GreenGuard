@@ -124,7 +124,8 @@ const HomeScreen = () => {
           />
         </View>
       </LinearGradient>
-
+        
+        
       <ScrollView contentContainerStyle={styles.content}>
         {/* Feature Icons */}
         <View style={styles.featureIconRow}>
@@ -138,7 +139,7 @@ const HomeScreen = () => {
             />
             <Text style={styles.featureLabel}>Disease </Text>
           </TouchableOpacity>
-
+         
           <TouchableOpacity 
             style={styles.featureButton}
             onPress={() => navigation.navigate('Community')}
@@ -185,7 +186,7 @@ const HomeScreen = () => {
           name="Home"
           icon="home"
           onPress={() => {}}
-          isActive={activeTab === 'Home'}  // Changed from 'home' to 'Home'
+          isActive={activeTab === 'Home'}  //change Changed from 'home' to 'Home'
         />
         <NavItem
           name="Profile"
