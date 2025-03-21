@@ -5,15 +5,27 @@ on:
     branches: [ main ]
     paths:
       - 'Backend/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Dependencies
+        run: |
+          cd Backend/GG_app_backend
+          npm install
+          
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID}}
-          vercel-project-id: ${{ secrets.PROJECT_ID}}
+          vercel-token: ${{ secrets.DU3m3aegQMPLminjsUsU3vqS }}
+          vercel-project-id: ${{ secrets.prj_uYjd5f9AzGMruMJ1StPxnKERq5LJ }}
+          working-directory: ./Backend/GG_app_backend
