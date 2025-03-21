@@ -17,10 +17,14 @@ jobs:
       - name: Checkout backend repo
         uses: actions/checkout@v3
         with:
-          repository: your-username/gg-backend
-          path: gg-backend
+          repository: poornamadhusith/gg-backend
           token: ${{ secrets.GH_PAT }}
-      
+          path: gg-backend
+          ssh-strict: true
+          persist-credentials: true
+          clean: true
+          fetch-depth: 1
+          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
