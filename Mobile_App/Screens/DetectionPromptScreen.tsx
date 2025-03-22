@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'RobotoCondensed-Regular',
   },
-  tipContainer: {
+  tipContainer: {//aa
     position: 'absolute',
     bottom: 30,
     flexDirection: 'row',
