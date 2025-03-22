@@ -1,12 +1,7 @@
-
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { LinearGradient } from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, BackHandler } from 'react-native';
-
+import { LinearGradient } from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app';
 
@@ -30,19 +25,10 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
   }, [navigation]);
 
   return (
-
     <LinearGradient
       colors={['#E8F5E9', '#C8E6C9', '#A5D6A7']}
       style={styles.container}
     >
-      <View style={styles.header}>
-        <Text style={styles.title}>Crop Health Scanner</Text>
-        <Text style={styles.subtitle}>Choose Detection Method</Text>
-        <View style={styles.decorationLine} />
-      </View>
-
-
-    <View style={styles.container}>
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
@@ -51,8 +37,12 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.title}>Select Detection Type</Text>
-      
+
+      <View style={styles.header}>
+        <Text style={styles.title}>Crop Health Scanner</Text>
+        <Text style={styles.subtitle}>Choose Detection Method</Text>
+        <View style={styles.decorationLine} />
+      </View>
 
       <TouchableOpacity
         style={styles.button}
@@ -104,20 +94,15 @@ const DetectionPromptScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     flex: 1,
-
     padding: 25,
-    justifyContent: 'flex-start',
   },
   header: {
-
     alignItems: 'center',
     marginBottom: 40,
     marginTop: 60,
   },
   title: {
-
     fontSize: 28,
     fontFamily: 'RobotoCondensed-Bold',
     color: '#1B5E20',
@@ -169,7 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'RobotoCondensed-Regular',
   },
-  tipContainer: {//aa
+  tipContainer: {
     position: 'absolute',
     bottom: 30,
     flexDirection: 'row',
@@ -184,47 +169,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 10,
     fontFamily: 'RobotoCondensed-Italic',
-
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 32,
-    marginTop: 96,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#2ecc71',
-    padding: 18,
-    borderRadius: 12,
-    width: '85%',
-    alignItems: 'center',
-    marginVertical: 12,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
   },
   topBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 16,
     paddingTop: 48,
-    backgroundColor: '#FFFFFF',
     zIndex: 1,
-    height: 96,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   backButton: {
     padding: 8,
@@ -236,7 +187,6 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center',
     lineHeight: 32,
-
   },
 });
 
