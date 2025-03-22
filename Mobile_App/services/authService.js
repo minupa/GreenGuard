@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, API_URL } from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -33,8 +33,18 @@ export const register = async (userData) => {
     } catch (apiError) {
       console.error('Backend registration failed:', apiError.message);
       
-      // If in development mode, create a local user for testing
-      if (__DEV__) {
+      // Check specifically for duplicate phone number error
+      if (apiError.response?.data?.message?.includes('already exists') || 
+          apiError.response?.status === 409) {
+        return {
+          success: false,
+          message: 'An account with this phone number already exists',
+          statusCode: 409
+        };
+      }
+      
+      // Only create local user if it's a network error, not a validation error
+      if (__DEV__ && !apiError.response) {
         console.log('Development mode: Creating local user');
         
         // Generate a fake user ID for local testing
@@ -90,11 +100,7 @@ export const login = async (phoneNumber, password) => {
       if (response.data.success) {
         // Store auth token
         await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
-        
-        // Store user data
         await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
-        
-        console.log('User logged in successfully with backend');
         return { success: true, user: response.data.user };
       } else {
         return { success: false, message: response.data.message || 'Login failed' };
@@ -106,38 +112,43 @@ export const login = async (phoneNumber, password) => {
       if (__DEV__) {
         console.log('Development mode: Trying local login');
         
-        // Get stored users data (for development testing)
         const storedUserData = await AsyncStorage.getItem(USER_DATA_KEY);
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
           
-          // Simple local validation
-          if (userData.phoneNumber === phoneNumber) {
+          // Check both phone number AND password match
+          if (userData.phoneNumber === phoneNumber && userData.password === password) {
             console.log('Local login successful for development');
             await AsyncStorage.setItem(AUTH_TOKEN_KEY, 'local-dev-token');
-            
             return { 
               success: true, 
               user: userData, 
               localOnly: true,
               message: 'Logged in with local storage (development mode)'
             };
+          } else if (userData.phoneNumber === phoneNumber) {
+            // If phone exists but password is wrong
+            return {
+              success: false,
+              message: 'Incorrect password',
+              statusCode: 401
+            };
           }
         }
       }
       
-      // For production or if local login fails, return the error
+      // For production or if local login fails
       return { 
         success: false, 
-        message: apiError.response?.data?.message || 'Network error during login',
-        statusCode: apiError.response?.status
+        message: apiError.response?.data?.message || 'Invalid phone number or password',
+        statusCode: apiError.response?.status || 401
       };
     }
   } catch (error) {
     console.error('Login error:', error);
     return { 
       success: false, 
-      message: error.response?.data?.message || 'Network error during login'
+      message: 'Network error during login'
     };
   }
 };
@@ -220,6 +231,45 @@ export const getStoredUserData = async () => {
 };
 
 /**
+ * Delete user account
+ * @returns {Promise<Object>} Result object with success status and message
+ */
+export const deleteAccount = async () => {
+  try {
+    const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
+    
+    const response = await axios.delete(
+      `${API_URL}/auth/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    if (response.data.success) {
+      await AsyncStorage.multiRemove([AUTH_TOKEN_KEY, USER_DATA_KEY]);
+      return {
+        success: true,
+        message: 'Account deleted successfully'
+      };
+    }
+    
+    return {
+      success: false,
+      message: response.data.message || 'Failed to delete account'
+    };
+
+  } catch (error) {
+    console.error('Delete account error:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error deleting account'
+    };
+  }
+};
+
+/**
  * Update user profile
  * @param {Object} userData - User data to update
  * @returns {Promise} - Promise with update result
@@ -232,8 +282,12 @@ export const updateUserProfile = async (userData) => {
       return { success: false, message: 'Authentication required' };
     }
 
-    const response = await api.put('/auth/update-profile', userData, {
-      headers: { Authorization: `Bearer ${token}` }
+    // Fix the endpoint URL - change from '/auth/update-profile' to '/auth/profile'
+    const response = await axios.put(`${API_URL}/auth/profile`, userData, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
 
     if (response.data.success) {
@@ -259,5 +313,6 @@ export default {
   isLoggedIn,
   logout,
   getStoredUserData,
+  deleteAccount,
   updateUserProfile
 };

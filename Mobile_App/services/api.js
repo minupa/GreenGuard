@@ -34,3 +34,7 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// Export as both named exports and default export for compatibility
+export { api, API_URL };
+export default api;

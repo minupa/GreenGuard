@@ -7,7 +7,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 type RouteParams = {
   diseaseName: string;
@@ -22,10 +21,6 @@ const SolutionScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <BackgroundPattern 
-          numberOfElements={25}
-          opacity={0.8}
-        />
 
         {/* Top Bar with Back Button */}
         <View style={styles.topBar}>
@@ -86,7 +81,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   titleContainer: {
-    backgroundColor: 'rgba(227, 227, 227, 0.9)',
+    backgroundColor: 'rgba(144, 238, 144, 0.9)', // Light green color
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 20,
@@ -123,6 +118,9 @@ const styles = StyleSheet.create({
   },
   solutionContainer: {
     marginTop: 20,
+    backgroundColor: 'rgba(144, 238, 144, 0.9)',
+    borderRadius: 10,
+    padding: 15,
   },
   solutionTitle: {
     fontSize: 18,
@@ -135,6 +133,9 @@ const styles = StyleSheet.create({
     color: '#333',
     lineHeight: 24,
     fontFamily: 'RobotoCondensed-Regular',
+    backgroundColor: '#FFFFFF',
+    padding: 15,
+    borderRadius: 8,
   },
 });
 

@@ -3,8 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
   ActivityIndicator,
   Image,
   Alert
@@ -14,7 +16,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as authService from '../services/authService';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
@@ -90,6 +91,42 @@ const UserProfileScreen = () => {
     navigation.navigate('EditProfile', { userData });
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              const result = await authService.deleteAccount();
+              if (result.success) {
+                Alert.alert('Success', 'Your account has been deleted successfully');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                });
+              } else {
+                Alert.alert('Error', result.message || 'Failed to delete account');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'An error occurred while deleting your account');
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -125,73 +162,87 @@ const UserProfileScreen = () => {
   console.log("Display data for profile:", userDisplayData);
 
   return (
-    <LinearGradient
-      colors={['#22c55e', '#16a34a']}
-      style={styles.gradient}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
     >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="#ffffff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>User Profile</Text>
-      </View>
-
-      <ScrollView style={styles.container}>
-        <View style={styles.profileContainer}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.profileHeader}>
-              <View style={styles.avatarContainer}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>
-                    {userDisplayData.fullName.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.userName}>{userDisplayData.fullName}</Text>
-              <Text style={styles.userPhone}>{userDisplayData.phoneNumber}</Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoSection}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
-              <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Age:</Text>
-                <Text style={styles.infoValue}>{userDisplayData.age}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Address:</Text>
-                <Text style={styles.infoValue}>{userDisplayData.address}</Text>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoSection}>
-              <Text style={styles.sectionTitle}>Selected Crops</Text>
-              {userDisplayData.selectedCrops.map((crop, index) => (
-                <View key={index} style={styles.cropItem}>
-                  <MaterialCommunityIcons
-                    name="leaf"
-                    size={16}
-                    color="#22c55e"
-                    style={styles.cropIcon}
-                  />
-                  <Text style={styles.cropText}>{crop}</Text>
-                </View>
-              ))}
-            </View>
-            
-            <TouchableOpacity 
-              style={styles.editButton}
-              onPress={handleEditProfile}
-            >
-              <Text style={styles.editButtonText}>Edit Profile</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <LinearGradient
+          colors={['#22c55e', '#16a34a']}
+          style={styles.gradient}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity onPress={goBack} style={styles.backButton}>
+              <Icon name="arrow-back" size={24} color="#ffffff" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>User Profile</Text>
           </View>
-        </View>
+
+          <ScrollView style={styles.container}>
+            <View style={styles.profileContainer}>
+              <View style={styles.userInfoContainer}>
+                <View style={styles.profileHeader}>
+                  <View style={styles.avatarContainer}>
+                    <View style={styles.avatar}>
+                      <Text style={styles.avatarText}>
+                        {userDisplayData.fullName.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.userName}>{userDisplayData.fullName}</Text>
+                  <Text style={styles.userPhone}>{userDisplayData.phoneNumber}</Text>
+                </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.infoSection}>
+                  <Text style={styles.sectionTitle}>Personal Information</Text>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoLabel}>Age:</Text>
+                    <Text style={styles.infoValue}>{userDisplayData.age}</Text>
+                  </View>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoLabel}>Address:</Text>
+                    <Text style={styles.infoValue}>{userDisplayData.address}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.infoSection}>
+                  <Text style={styles.sectionTitle}>Selected Crops</Text>
+                  {userDisplayData.selectedCrops.map((crop, index) => (
+                    <View key={index} style={styles.cropItem}>
+                      <MaterialCommunityIcons
+                        name="leaf"
+                        size={16}
+                        color="#22c55e"
+                        style={styles.cropIcon}
+                      />
+                      <Text style={styles.cropText}>{crop}</Text>
+                    </View>
+                  ))}
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.editButton}
+                  onPress={handleEditProfile}
+                >
+                  <Text style={styles.editButtonText}>Edit Profile</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.deleteButton}
+                  onPress={handleDeleteAccount}
+                >
+                  <Text style={styles.deleteButtonText}>Delete Account</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </LinearGradient>
       </ScrollView>
-    </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -202,6 +253,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   header: {
     flexDirection: 'row',
@@ -355,6 +409,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   editButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: '#ef4444',
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  deleteButtonText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',

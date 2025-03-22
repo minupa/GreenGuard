@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import BackgroundPattern from '../components/BackgroundPattern';
 import * as authService from '../services/authService';
 
 const SignupScreen = () => {
@@ -49,6 +48,23 @@ const SignupScreen = () => {
     );
   };
 
+  const validatePassword = (password: string) => {
+    const minLength = password.length >= 8;
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    if (!minLength) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!hasNumber) {
+      return 'Password must contain at least one number';
+    }
+    if (!hasSpecialChar) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
@@ -58,6 +74,13 @@ const SignupScreen = () => {
     };
 
     // Password validation
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      newErrors.password = passwordError;
+      isValid = false;
+    }
+
+    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
       isValid = false;
@@ -76,11 +99,9 @@ const SignupScreen = () => {
 
   const handleSignup = async () => {
     if (validateForm()) {
-      // Proceed with signup
       setLoading(true);
 
       try {
-        // Call the register API with the format expected by the backend
         const userData = {
           fullName: formData.fullName,
           age: parseInt(formData.age),
@@ -94,24 +115,36 @@ const SignupScreen = () => {
         
         if (result.success) {
           if (result.localOnly) {
-            // This is a local-only registration (for development)
+            // Show warning about offline mode instead of automatically creating local account
             Alert.alert(
-              'Local Registration',
-              'Created a local account. Server connection unavailable.',
-              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+              'Connection Error',
+              'Cannot connect to server. Please check your internet connection and try again.',
+              [{ text: 'OK' }]
             );
-          } else {
-            // This is a server-authenticated registration
-            Alert.alert(
-              'Success',
-              'Account created successfully',
-              [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-            );
+            return;
           }
+          
+          Alert.alert(
+            'Success',
+            'Account created successfully',
+            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+          );
         } else {
-          // Handle specific error codes
-          if (result.statusCode === 404) {
-            Alert.alert('Server Error', 'The registration service is unavailable. The backend may be offline.');
+          // Handle specific error cases
+          if (result.statusCode === 409) {
+            Alert.alert(
+              'Registration Failed',
+              'An account with this phone number already exists. Please login instead.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { 
+                  text: 'Go to Login', 
+                  onPress: () => navigation.navigate('Login')
+                }
+              ]
+            );
+          } else if (result.statusCode === 404) {
+            Alert.alert('Server Error', 'The registration service is unavailable. Please try again later.');
           } else {
             Alert.alert('Error', result.message || 'Registration failed');
           }
@@ -128,7 +161,7 @@ const SignupScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <BackgroundPattern opacity={0.8} />
+        {/* Remove BackgroundPattern component here */}
 
         <View style={styles.topBar}>
           <TouchableOpacity

@@ -15,7 +15,6 @@ import axios from "axios";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { Video } from "react-native-video";
 import { useNavigation } from "@react-navigation/native";
-import BackgroundPattern from '../components/BackgroundPattern';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 
@@ -122,10 +121,51 @@ const DetectionScreen = ({ route }: any) => {
       setConfidence(data.confidence);
     } catch (error) {
       console.error("Error predicting disease:", error);
-      Alert.alert(
-        "Prediction Error",
-        "Failed to get predictions. Please try again."
-      );
+      
+      // Handle specific error cases
+      if (error.code === "ECONNABORTED") {
+        Alert.alert(
+          "Connection Timeout",
+          "The request took too long to complete. Please check your internet connection and try again."
+        );
+      } else if (error.code === "ERR_NETWORK") {
+        Alert.alert(
+          "Network Error",
+          "Unable to connect to the prediction service. Please check your internet connection."
+        );
+      } else if (error.response) {
+        // Server responded with error status
+        switch (error.response.status) {
+          case 400:
+            Alert.alert(
+              "Invalid Image",
+              "The selected image could not be processed. Please try with a different image."
+            );
+            break;
+          case 413:
+            Alert.alert(
+              "Image Too Large",
+              "The selected image is too large. Please choose a smaller image."
+            );
+            break;
+          case 500:
+            Alert.alert(
+              "Server Error",
+              "The prediction service is currently experiencing issues. Please try again later."
+            );
+            break;
+          default:
+            Alert.alert(
+              "Prediction Error",
+              "An error occurred while processing your image. Please try again."
+            );
+        }
+      } else {
+        Alert.alert(
+          "Prediction Error",
+          "Failed to get predictions. Please try again later."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -230,14 +270,9 @@ const DetectionScreen = ({ route }: any) => {
     );
   };
 
-  // Rest of your component remains the same...
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <BackgroundPattern 
-          numberOfElements={25}
-          opacity={0.4}
-        />
         
         <View style={styles.topBar}>
           <TouchableOpacity
@@ -419,6 +454,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     alignItems: "center",
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6, // for Android shadow
   },
   selectButtonText: {
     fontSize: 16,
@@ -433,6 +477,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     zIndex: 1,
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // for Android shadow
   },
   resultText: {
     fontSize: 16,
@@ -473,6 +526,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    // Add shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // for Android shadow
   },
   clearButtonText: {
     fontSize: 16,

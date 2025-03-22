@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import BackgroundPattern from '../components/BackgroundPattern';
 
 type RootStackParamList = {
   CropSelection: undefined;
@@ -31,13 +30,13 @@ const CropSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackgroundPattern opacity={0.8} />
+      {/* Remove BackgroundPattern component here */}
 
       {/* Top Bar with Back Button */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('DetectionPrompt')}
         >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
@@ -190,6 +189,9 @@ const CropSelectionScreen = () => {
       <TouchableOpacity style={styles.selectButton} onPress={handleSelectButton}>
         <Text style={styles.selectButtonText}>Select</Text>
       </TouchableOpacity>
+
+      {/* Add half circle design */}
+      <View style={styles.halfCircle} />
     </View>
   );
 };
@@ -200,16 +202,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
   },
-  backgroundPattern: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
-  },
-  treeIcon: {
-    position: 'absolute',
-    fontSize: 24,
-  },
+  // Remove these background-related styles
+backgroundPattern: {},
+  treeIcon: {},
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -304,12 +299,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     zIndex: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   selectButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#000000",
     fontFamily: "RobotoCondensed-Bold",
+  },
+  halfCircle: {
+    position: 'absolute',
+    bottom: -100,
+    width: 400,
+    height: 200,
+    borderTopLeftRadius: 200,
+    borderTopRightRadius: 200,
+    backgroundColor: 'rgba(76, 175, 80, 0.6)', // Darker green with more opacity
+    transform: [{ scaleX: 1.5 }],
   },
 });
 
