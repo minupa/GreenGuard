@@ -48,6 +48,23 @@ const SignupScreen = () => {
     );
   };
 
+  const validatePassword = (password: string) => {
+    const minLength = password.length >= 8;
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    if (!minLength) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!hasNumber) {
+      return 'Password must contain at least one number';
+    }
+    if (!hasSpecialChar) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
@@ -57,6 +74,13 @@ const SignupScreen = () => {
     };
 
     // Password validation
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      newErrors.password = passwordError;
+      isValid = false;
+    }
+
+    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
       isValid = false;
