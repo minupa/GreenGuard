@@ -20,6 +20,7 @@ import * as authService from '../services/authService';
 const UserProfileScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const isViewOnly = route.params?.viewOnly;  // Get the viewOnly parameter
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -224,19 +225,23 @@ const UserProfileScreen = () => {
                   ))}
                 </View>
                 
-                <TouchableOpacity 
-                  style={styles.editButton}
-                  onPress={handleEditProfile}
-                >
-                  <Text style={styles.editButtonText}>Edit Profile</Text>
-                </TouchableOpacity>
+                {!isViewOnly && (
+                  <>
+                    <TouchableOpacity 
+                      style={styles.editButton}
+                      onPress={handleEditProfile}
+                    >
+                      <Text style={styles.editButtonText}>Edit Profile</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity 
-                  style={styles.deleteButton}
-                  onPress={handleDeleteAccount}
-                >
-                  <Text style={styles.deleteButtonText}>Delete Account</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.deleteButton}
+                      onPress={handleDeleteAccount}
+                    >
+                      <Text style={styles.deleteButtonText}>Delete Account</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
               </View>
             </View>
           </ScrollView>

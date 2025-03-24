@@ -62,9 +62,8 @@ const CommunityScreen = () => {
           <Icon name="arrow-left" size={28} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Community Discussions</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {
-          userId: 'currentUser',
-          isEditable: true
+        <TouchableOpacity onPress={() => navigation.navigate('UserProfile', {
+          viewOnly: true  // Add this flag to indicate view-only mode
         })}>
           <Icon name="account-circle" size={32} color="#4CAF50" />
         </TouchableOpacity>
