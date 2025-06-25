@@ -94,13 +94,14 @@ const LoginScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          onPress={() => Alert.alert('Signup is disabled in this version')}
+          onPress={() => navigation.navigate('Signup')}
         >
           <Text style={styles.signupText}>
             Don't have an account?{' '}
             <Text style={styles.signupLink}>Sign up</Text>
           </Text>
         </TouchableOpacity>
+
       </View>
     </View>
   );
