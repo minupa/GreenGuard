@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as authService from '../services/authService';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -73,20 +72,17 @@ const SignupScreen = () => {
       phoneNumber: '',
     };
 
-    // Password validation
     const passwordError = validatePassword(formData.password);
     if (passwordError) {
       newErrors.password = passwordError;
       isValid = false;
     }
 
-    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
       isValid = false;
     }
 
-    // Phone number validation
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(formData.phoneNumber)) {
       newErrors.phoneNumber = 'Phone number must be exactly 10 digits';
@@ -97,72 +93,24 @@ const SignupScreen = () => {
     return isValid;
   };
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
     if (validateForm()) {
       setLoading(true);
 
-      try {
-        const userData = {
-          fullName: formData.fullName,
-          age: parseInt(formData.age),
-          address: formData.address,
-          phoneNumber: formData.phoneNumber,
-          password: formData.password,
-          selectedCrops
-        };
-        
-        const result = await authService.register(userData);
-        
-        if (result.success) {
-          if (result.localOnly) {
-            // Show warning about offline mode instead of automatically creating local account
-            Alert.alert(
-              'Connection Error',
-              'Cannot connect to server. Please check your internet connection and try again.',
-              [{ text: 'OK' }]
-            );
-            return;
-          }
-          
-          Alert.alert(
-            'Success',
-            'Account created successfully',
-            [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-          );
-        } else {
-          // Handle specific error cases
-          if (result.statusCode === 409) {
-            Alert.alert(
-              'Registration Failed',
-              'An account with this phone number already exists. Please login instead.',
-              [
-                { text: 'Cancel', style: 'cancel' },
-                { 
-                  text: 'Go to Login', 
-                  onPress: () => navigation.navigate('Login')
-                }
-              ]
-            );
-          } else if (result.statusCode === 404) {
-            Alert.alert('Server Error', 'The registration service is unavailable. Please try again later.');
-          } else {
-            Alert.alert('Error', result.message || 'Registration failed');
-          }
-        }
-      } catch (error) {
-        console.error('Registration error:', error);
-        Alert.alert('Error', 'An unexpected error occurred');
-      } finally {
+      setTimeout(() => {
+        Alert.alert(
+          'Success',
+          'Account created successfully',
+          [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+        );
         setLoading(false);
-      }
+      }, 1000); // Simulate a fake network delay
     }
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {/* Remove BackgroundPattern component here */}
-
         <View style={styles.topBar}>
           <TouchableOpacity
             style={styles.backButton}
@@ -203,9 +151,7 @@ const SignupScreen = () => {
             placeholder="Phone Number"
             value={formData.phoneNumber}
             onChangeText={(text) => {
-              // Only allow numbers
               const numericText = text.replace(/[^0-9]/g, '');
-              // Limit to 10 digits
               if (numericText.length <= 10) {
                 setFormData({ ...formData, phoneNumber: numericText });
               }
@@ -379,7 +325,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 12,
-    marginTop: 5,
+    marginTop: -5,
     marginBottom: 10,
   },
 });
