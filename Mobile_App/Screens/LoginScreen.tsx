@@ -10,7 +10,6 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as authService from '../services/authService';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -20,48 +19,27 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!phoneNumber || !password) {
       setError('Phone number and password are required');
       return;
     }
 
-    setError(''); // Clear any previous errors
+    setError('');
     setLoading(true);
 
-    try {
-      const response = await authService.login(phoneNumber, password);
-      
-      if (response.success) {
-        // Handle successful login
-        navigation.replace('Home'); // or wherever your main app screen is
+    const validPhone = '0783490343';
+    const validPassword = 'minupa1234';
+
+    // Simulate async login
+    setTimeout(() => {
+      if (phoneNumber === validPhone && password === validPassword) {
+        navigation.replace('Home');
       } else {
-        // Show specific error message from server
-        setError(response.message);
-        
-        // If no account exists, show sign up option
-        if (response.message.includes('Please sign up')) {
-          Alert.alert(
-            'Account Not Found',
-            'Would you like to create a new account?',
-            [
-              {
-                text: 'Cancel',
-                style: 'cancel'
-              },
-              {
-                text: 'Sign Up',
-                onPress: () => navigation.navigate('Signup')
-              }
-            ]
-          );
-        }
+        setError('Invalid phone number or password');
       }
-    } catch (error) {
-      setError('An error occurred. Please try again.');
-    } finally {
       setLoading(false);
-    }
+    }, 1000);
   };
 
   return (
@@ -116,7 +94,7 @@ const LoginScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          onPress={() => navigation.navigate('Signup')}
+          onPress={() => Alert.alert('Signup is disabled in this version')}
         >
           <Text style={styles.signupText}>
             Don't have an account?{' '}
@@ -133,29 +111,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    paddingTop: 80, // Add padding to move content up
-    justifyContent: 'flex-start', // Change from 'center' to 'flex-start'
+    paddingTop: 80,
+    justifyContent: 'flex-start',
   },
   logo: {
-    width: 150, // Increased from 120
-    height: 150, // Increased from 120
+    width: 150,
+    height: 150,
     resizeMode: 'contain',
-    marginBottom: -25, // Increased negative margin to pull text up more
+    marginBottom: -25,
   },
   brandName: {
-    fontSize: 20, // Reduced from 24
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#006400',
     fontFamily: 'RobotoCondensed-Bold',
     marginBottom: 10,
-    marginTop: -5, // Added negative margin to pull up even more
+    marginTop: -5,
   },
   title: {
     fontSize: 27,
     fontWeight: '800',
     color: '#000',
     fontFamily: 'RobotoCondensed-Regular',
-    marginBottom: 15, // Reduced from 30
+    marginBottom: 15,
     zIndex: 1,
   },
   formBox: {
