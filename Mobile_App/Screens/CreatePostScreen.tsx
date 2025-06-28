@@ -9,18 +9,21 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-
 const CreatePostScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+
   const [image, setImage] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const [userName, setUserName] = useState('');
+
+  const existingPosts = route.params?.posts || [];
 
   const handleImagePicker = () => {
     const options = {
@@ -34,37 +37,28 @@ const CreatePostScreen = () => {
       [
         {
           text: 'Take Photo',
-          onPress: () => launchCamera(options, (response) => {
-            if (response.assets?.[0]?.uri) {
-              setImage(response.assets[0].uri);
-            }
-          })
+          onPress: () =>
+            launchCamera(options, (response) => {
+              if (response.assets?.[0]?.uri) {
+                setImage(response.assets[0].uri);
+              }
+            }),
         },
         {
           text: 'Choose from Gallery',
-          onPress: () => launchImageLibrary(options, (response) => {
-            if (response.assets?.[0]?.uri) {
-              setImage(response.assets[0].uri);
-            }
-          })
+          onPress: () =>
+            launchImageLibrary(options, (response) => {
+              if (response.assets?.[0]?.uri) {
+                setImage(response.assets[0].uri);
+              }
+            }),
         },
-        { text: 'Cancel', style: 'cancel' }
-      ]
+        { text: 'Cancel', style: 'cancel' },
+      ],
     );
   };
 
-  const savePostToStorage = async (newPost: any) => {
-    try {
-      const existingPosts = await AsyncStorage.getItem('communityPosts');
-      const posts = existingPosts ? JSON.parse(existingPosts) : [];
-      const updatedPosts = [newPost, ...posts];
-      await AsyncStorage.setItem('communityPosts', JSON.stringify(updatedPosts));
-    } catch (error) {
-      console.error('Error saving post:', error);
-    }
-  };
-
-  const handlePost = async () => {
+  const handlePost = () => {
     if (!userName.trim()) {
       Alert.alert('Error', 'Please enter your name');
       return;
@@ -81,12 +75,14 @@ const CreatePostScreen = () => {
       content: caption,
       image,
       likes: 0,
-      comments: [],
+      comments: 0,
       avatar: 'https://picsum.photos/200',
     };
 
-    await savePostToStorage(newPost);
-    navigation.navigate('Community', { newPost });
+    navigation.navigate('Community', {
+      newPost,
+      posts: [newPost, ...existingPosts],
+    });
   };
 
   return (
@@ -94,44 +90,46 @@ const CreatePostScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-left" size={24} color="#333" />
-      </TouchableOpacity>
-
-      <Text style={styles.title}>Create New Post</Text>
-
-      <TouchableOpacity style={styles.imagePicker} onPress={handleImagePicker}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.selectedImage} />
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Icon name="camera-plus" size={40} color="#666" />
-            <Text style={styles.uploadText}>Add Photo</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Your Name"
-        value={userName}
-        onChangeText={setUserName}
-      />
-
-      <TextInput
-        style={[styles.input, styles.captionInput]}
-        placeholder="Add a caption..."
-        value={caption}
-        onChangeText={setCaption}
-        multiline
-      />
-
-      <TouchableOpacity
-        style={styles.postButton}
-        onPress={handlePost}
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.postButtonText}>Post to Community</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={24} color="#333" />
+        </TouchableOpacity>
+
+        <Text style={styles.title}>Create New Post</Text>
+
+        <TouchableOpacity style={styles.imagePicker} onPress={handleImagePicker}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.selectedImage} />
+          ) : (
+            <View style={styles.imagePlaceholder}>
+              <Icon name="camera-plus" size={40} color="#666" />
+              <Text style={styles.uploadText}>Add Photo</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Your Name"
+          value={userName}
+          onChangeText={setUserName}
+        />
+
+        <TextInput
+          style={[styles.input, styles.captionInput]}
+          placeholder="Add a caption..."
+          value={caption}
+          onChangeText={setCaption}
+          multiline
+        />
+
+        <TouchableOpacity style={styles.postButton} onPress={handlePost}>
+          <Text style={styles.postButtonText}>Post to Community</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -139,12 +137,11 @@ const CreatePostScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 20,
+    margin: 20,
   },
   title: {
     fontSize: 24,
@@ -153,8 +150,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imagePicker: {
-    width: '100%',
+    width: '90%',
     aspectRatio: 1,
+    marginHorizontal: '5%',
     marginBottom: 20,
   },
   imagePlaceholder: {
@@ -177,6 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
     padding: 15,
+    marginHorizontal: '5%',
     marginBottom: 15,
     fontSize: 16,
   },
@@ -189,6 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',
+    marginHorizontal: '5%',
     marginTop: 20,
   },
   postButtonText: {
