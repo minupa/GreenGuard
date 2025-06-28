@@ -10,7 +10,7 @@ interface Post {
   user: string;
   content: string;
   likes: number;
-  comments: number;
+  comments: any[]; // keep as any[] for now, or define your comment type
   avatar: string;
 }
 
@@ -18,9 +18,11 @@ const CommunityScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [likedPosts, setLikedPosts] = useState<string[]>([]); // IDs of liked posts
 
   useEffect(() => {
     loadPosts();
+    loadLikedPosts();
   }, []);
 
   useEffect(() => {
@@ -32,6 +34,7 @@ const CommunityScreen = () => {
     }
   }, [route.params?.newPost]);
 
+  // Load posts from AsyncStorage
   const loadPosts = async () => {
     try {
       const storedPosts = await AsyncStorage.getItem('communityPosts');
@@ -43,12 +46,71 @@ const CommunityScreen = () => {
     }
   };
 
-  const savePosts = async (posts: Post[]) => {
+  // Save posts to AsyncStorage
+  const savePosts = async (postsToSave: Post[]) => {
     try {
-      await AsyncStorage.setItem('communityPosts', JSON.stringify(posts));
+      await AsyncStorage.setItem('communityPosts', JSON.stringify(postsToSave));
     } catch (error) {
       console.error('Failed to save posts', error);
     }
+  };
+
+  // Load liked posts IDs from AsyncStorage
+  const loadLikedPosts = async () => {
+    try {
+      const storedLikes = await AsyncStorage.getItem('likedPosts');
+      if (storedLikes) {
+        setLikedPosts(JSON.parse(storedLikes));
+      }
+    } catch (error) {
+      console.error('Failed to load liked posts', error);
+    }
+  };
+
+  // Save liked posts IDs to AsyncStorage
+  const saveLikedPosts = async (likesToSave: string[]) => {
+    try {
+      await AsyncStorage.setItem('likedPosts', JSON.stringify(likesToSave));
+    } catch (error) {
+      console.error('Failed to save liked posts', error);
+    }
+  };
+
+  // Toggle like/unlike for a post
+  const handleLikeToggle = (postId: string) => {
+    const hasLiked = likedPosts.includes(postId);
+
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          likes: hasLiked ? post.likes - 1 : post.likes + 1,
+        };
+      }
+      return post;
+    });
+
+    const updatedLikedPosts = hasLiked
+      ? likedPosts.filter(id => id !== postId)
+      : [...likedPosts, postId];
+
+    setPosts(updatedPosts);
+    setLikedPosts(updatedLikedPosts);
+
+    savePosts(updatedPosts);
+    saveLikedPosts(updatedLikedPosts);
+  };
+
+  // Delete a post by ID
+  const handleDeletePost = (postId: string) => {
+    const updatedPosts = posts.filter(post => post.id !== postId);
+    const updatedLikedPosts = likedPosts.filter(id => id !== postId);
+
+    setPosts(updatedPosts);
+    setLikedPosts(updatedLikedPosts);
+
+    savePosts(updatedPosts);
+    saveLikedPosts(updatedLikedPosts);
   };
 
   const handleViewProfile = (userId: string) => {
@@ -62,14 +124,21 @@ const CommunityScreen = () => {
           <Icon name="arrow-left" size={28} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Community Discussions</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('UserProfile', {
-          viewOnly: true  // Add this flag to indicate view-only mode
-        })}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('UserProfile', {
+              viewOnly: true,
+            })
+          }
+        >
           <Icon name="account-circle" size={32} color="#4CAF50" />
         </TouchableOpacity>
       </View>
+
       <FlatList
         data={posts}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <View style={styles.postContainer}>
             <TouchableOpacity
@@ -83,22 +152,50 @@ const CommunityScreen = () => {
                 <Text style={styles.userBadge}>Verified Farmer</Text>
               </View>
             </TouchableOpacity>
+
             <Text style={styles.postContent}>{item.content}</Text>
+
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={styles.postImage} />
+            ) : null}
+
             <View style={styles.postFooter}>
-              <TouchableOpacity style={styles.interactionButton}>
-                <Icon name="thumb-up-outline" size={20} color="#666" />
-                <Text style={styles.interactionText}>{item.likes}</Text>
+              <TouchableOpacity
+                style={styles.interactionButton}
+                onPress={() => handleLikeToggle(item.id)}
+              >
+                <Icon
+                  name="thumb-up-outline"
+                  size={20}
+                  color={likedPosts.includes(item.id) ? '#4CAF50' : '#666'}
+                />
+                <Text
+                  style={[
+                    styles.interactionText,
+                    likedPosts.includes(item.id) && { color: '#4CAF50' },
+                  ]}
+                >
+                  {item.likes}
+                </Text>
               </TouchableOpacity>
+
               <TouchableOpacity style={styles.interactionButton}>
                 <Icon name="comment-outline" size={20} color="#666" />
-                <Text style={styles.interactionText}>{item.comments}</Text>
+                <Text style={styles.interactionText}>{item.comments.length}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.interactionButton, { marginLeft: 'auto' }]}
+                onPress={() => handleDeletePost(item.id)}
+              >
+                <Icon name="delete-outline" size={20} color="#e53935" />
+                <Text style={[styles.interactionText, { color: '#e53935' }]}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
         )}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
       />
+
       <TouchableOpacity
         style={styles.newPostButton}
         onPress={() => navigation.navigate('CreatePost')}
@@ -170,9 +267,15 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
+  postImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
   postFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   interactionButton: {
     flexDirection: 'row',
