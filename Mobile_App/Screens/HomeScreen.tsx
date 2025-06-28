@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,28 +11,12 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as authService from '../services/authService';
 
 const HomeScreen = () => {
-  const [activeTab, setActiveTab] = useState('Home'); // Changed from 'home' to 'Home'
+  const [activeTab, setActiveTab] = useState('Home');
   const navigation = useNavigation();
-  const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await authService.getUserProfile();
-        if (response.success) {
-          setUserData(response.user);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  // Add this effect to reset active tab when screen comes into focus
+  // Reset active tab when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       setActiveTab('Home');
@@ -103,9 +87,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={[
-      styles.container
-    ]}>
+    <View style={styles.container}>
       {/* Green Header Section */}
       <LinearGradient
         colors={['#2ecc71', '#27ae60']}
@@ -114,7 +96,7 @@ const HomeScreen = () => {
         <View style={styles.headerContent}>
           <View style={styles.greetingBox}>
             <Text style={styles.greeting}>
-              Hi, {userData?.fullName?.split(' ')[0] || 'User'}
+              Hi, Minupa
             </Text>
           </View>
           <Image 
@@ -178,14 +160,12 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Bottom Navigation Bar */}
-      <View style={[
-        styles.bottomNav
-      ]}>
+      <View style={styles.bottomNav}>
         <NavItem
           name="Home"
           icon="home"
           onPress={() => {}}
-          isActive={activeTab === 'Home'}  // Changed from 'home' to 'Home'
+          isActive={activeTab === 'Home'}
         />
         <NavItem
           name="Profile"
@@ -218,7 +198,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     padding: 20,
-    paddingTop: 10, // Reduced top padding since we have the header
+    paddingTop: 10,
   },
   featureIconRow: {
     flexDirection: 'row',
@@ -238,13 +218,13 @@ const styles = StyleSheet.create({
     borderColor: '#E5E5E5',
   },
   featureImage: {
-    width: 35, // Smaller image
+    width: 35,
     height: 35,
     borderRadius: 8,
-    marginBottom: 4, // Reduced margin
+    marginBottom: 4,
   },
   featureLabel: {
-    fontSize: 11, // Smaller font
+    fontSize: 11,
     fontWeight: '600',
     color: '#2C3E50',
     textAlign: 'center',
@@ -311,8 +291,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingVertical: 8, // Reduced from 12
-    paddingHorizontal: 16, // Reduced from 20
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
     shadowColor: '#000',
@@ -326,14 +306,14 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: 'center',
-    minWidth: 50, // Reduced from 60
+    minWidth: 50,
   },
   navItemActive: {
-    transform: [{scale: 1.1}],
+    transform: [{ scale: 1.1 }],
   },
   navLabel: {
-    fontSize: 11, // Reduced from 12
-    marginTop: 2, // Reduced from 4
+    fontSize: 11,
+    marginTop: 2,
     color: '#666',
     fontFamily: 'RobotoCondensed-Regular',
   },
@@ -351,33 +331,33 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     width: '100%',
-    height: 100, // Fixed height for consistent vertical centering
+    height: 100,
     paddingHorizontal: 20,
-    elevation: 15, // Increased elevation for Android
+    elevation: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 8, // Increased offset
+      height: 8,
     },
-    shadowOpacity: 0.4, // Increased opacity
-    shadowRadius: 10, // Increased radius
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
     zIndex: 10,
-    justifyContent: 'center', // Ensures vertical centering
+    justifyContent: 'center',
   },
   headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'relative',  // Add this
+    position: 'relative',
   },
   logoImage: {
     width: 60,
     height: 60,
     tintColor: '#FFFFFF',
-    position: 'absolute',  // Add this
-    right: 0,            // Add this
-    top: '50%',          // Add this
-    transform: [{translateY: -30}], // Add this to center vertically
+    position: 'absolute',
+    right: 0,
+    top: '50%',
+    transform: [{ translateY: -30 }],
   },
   greetingBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
