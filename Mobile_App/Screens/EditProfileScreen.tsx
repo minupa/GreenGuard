@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import BackgroundPattern from '../components/BackgroundPattern';
-import * as authService from '../services/authService';
 
 const AVAILABLE_CROPS = [
   'Tea',
@@ -47,29 +46,19 @@ const EditProfileScreen = ({ route, navigation }) => {
 
     setLoading(true);
     try {
-      const updateData = {
+      const updatedData = {
         ...formData,
+        phoneNumber: userData.phoneNumber || '0783490343', 
         age: formData.age ? parseInt(formData.age) : null,
         selectedCrops
       };
 
-      const result = await authService.updateUserProfile(updateData);
-      
-      if (result.success) {
-        Alert.alert(
-          'Success',
-          'Profile updated successfully',
-          [{ 
-            text: 'OK', 
-            onPress: () => navigation.goBack()
-          }]
-        );
-      } else {
-        Alert.alert('Error', result.message || 'Failed to update profile');
-      }
+      setTimeout(() => {
+        setLoading(false);
+        navigation.navigate('UserProfile', { updatedUserData: updatedData });
+      }, 1000);
     } catch (error) {
       Alert.alert('Error', 'An unexpected error occurred');
-    } finally {
       setLoading(false);
     }
   };
@@ -80,13 +69,13 @@ const EditProfileScreen = ({ route, navigation }) => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Edit Profile</Text>
-          
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Full Name *</Text>
             <TextInput
               style={styles.input}
               value={formData.fullName}
-              onChangeText={(text) => setFormData({...formData, fullName: text})}
+              onChangeText={(text) => setFormData({ ...formData, fullName: text })}
               placeholder="Enter your full name"
               placeholderTextColor="#666"
             />
@@ -97,7 +86,7 @@ const EditProfileScreen = ({ route, navigation }) => {
             <TextInput
               style={styles.input}
               value={formData.age}
-              onChangeText={(text) => setFormData({...formData, age: text})}
+              onChangeText={(text) => setFormData({ ...formData, age: text })}
               placeholder="Enter your age"
               placeholderTextColor="#666"
               keyboardType="numeric"
@@ -109,7 +98,7 @@ const EditProfileScreen = ({ route, navigation }) => {
             <TextInput
               style={[styles.input, styles.multilineInput]}
               value={formData.address}
-              onChangeText={(text) => setFormData({...formData, address: text})}
+              onChangeText={(text) => setFormData({ ...formData, address: text })}
               placeholder="Enter your address"
               placeholderTextColor="#666"
               multiline
@@ -139,7 +128,7 @@ const EditProfileScreen = ({ route, navigation }) => {
             </View>
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.button}
             onPress={handleUpdate}
             disabled={loading}
@@ -209,6 +198,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#28a745',
     backgroundColor: 'transparent',
+    margin: 4,
   },
   cropButtonSelected: {
     backgroundColor: '#28a745',
@@ -237,4 +227,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfileScreen; 
+export default EditProfileScreen;
